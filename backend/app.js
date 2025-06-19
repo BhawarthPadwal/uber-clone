@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const connectToDb = require('./db/db'); // Import the database connection function
 const userRoutes = require('./routes/user.routes'); // Import user routes
+const captainRoutes = require('./routes/captain.routes'); // Import captain routes
 const cookieParser = require('cookie-parser'); // Import cookie parser middleware
 
 connectToDb(); // Connect to the database
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes); // Use user routes under /users
+app.use('/captains', captainRoutes); // Use captain routes under /captains
 
 
 module.exports = app;

@@ -257,3 +257,104 @@ Logs out the authenticated user by clearing the authentication token cookie and 
 }
 ```
 
+---
+
+# Captain Registration Endpoint Documentation
+
+## POST `/captains/register`
+
+### Description
+Registers a new captain (driver) in the system with vehicle details. On successful registration, returns the created captain object.
+
+---
+
+### Request Body
+
+Send a JSON object with the following structure:
+
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstname`: **string**, required, minimum 3 characters
+- `fullname.lastname`: **string**, optional
+- `email`: **string**, required, must be a valid email format
+- `password`: **string**, required, minimum 6 characters
+- `vehicle.color`: **string**, required, minimum 3 characters
+- `vehicle.plate`: **string**, required, minimum 3 characters
+- `vehicle.capacity`: **integer**, required, minimum 1
+- `vehicle.vehicleType`: **string**, required, one of `"car"`, `"motorcycle"`, `"auto"`
+
+---
+
+### Status Codes
+
+- **201 Created**: Captain registered successfully
+- **400 Bad Request**: Validation failed (returns details in `errors` array)
+- **500 Internal Server Error**: Server error
+
+---
+
+### Example Successful Response
+
+```json
+{
+  "_id": "60f7c2b5e1d3c2a5b8e4d456",
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "socketId": null,
+  "status": "inactive",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  },
+  "location": {
+    "lat": null,
+    "lng": null
+  }
+}
+```
+
+---
+
+### Example Error Response (Validation Error)
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Color must be at least 3 characters long",
+      "param": "vehicle.color",
+      "location": "body"
+    }
+  ]
+}
+```
+
+---
+
+### Notes
+
+- The password is not returned in the response for security reasons.
+- Additional endpoints for captain login, profile, and logout can be documented similarly if implemented.
+
