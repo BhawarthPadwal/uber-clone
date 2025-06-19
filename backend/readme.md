@@ -152,3 +152,108 @@ Send a JSON object with the following structure:
 }
 ```
 
+---
+
+# User Profile Endpoint Documentation
+
+## GET `/users/profile`
+
+### Description
+Returns the authenticated user's profile information. Requires a valid JWT token to be sent in the `Authorization` header as a Bearer token or as a `token` cookie.
+
+---
+
+### Request Headers
+
+- `Authorization: Bearer <JWT_TOKEN>`  
+  or  
+- Cookie: `token=<JWT_TOKEN>`
+
+---
+
+### Status Codes
+
+- **200 OK**: Returns the user profile
+- **401 Unauthorized**: Token missing or invalid
+- **400 Bad Request**: User not found in request
+
+---
+
+### Example Successful Response
+
+```json
+{
+  "_id": "60f7c2b5e1d3c2a5b8e4d123",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "socketId": null
+}
+```
+
+---
+
+### Example Error Response (Unauthorized)
+
+```json
+{
+  "message": "No token, authorization denied"
+}
+```
+
+---
+
+### Example Error Response (User Not Found)
+
+```json
+{
+  "message": "User not found in request"
+}
+```
+
+---
+
+# User Logout Endpoint Documentation
+
+## GET `/users/logout`
+
+### Description
+Logs out the authenticated user by clearing the authentication token cookie and blacklisting the token. Requires a valid JWT token to be sent in the `Authorization` header as a Bearer token or as a `token` cookie.
+
+---
+
+### Request Headers
+
+- `Authorization: Bearer <JWT_TOKEN>`  
+  or  
+- Cookie: `token=<JWT_TOKEN>`
+
+---
+
+### Status Codes
+
+- **200 OK**: Logout successful
+- **401 Unauthorized**: Token missing or invalid
+
+---
+
+### Example Successful Response
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+---
+
+### Example Error Response (Unauthorized)
+
+```json
+{
+  "message": "No token, authorization denied"
+}
+```
+
