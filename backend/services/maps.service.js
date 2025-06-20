@@ -1,3 +1,5 @@
+const captainModel = require('../models/captain.model');
+
 module.exports.getAddressCoordinates = async (address) => {
     const axios = require('axios');
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
@@ -7,7 +9,7 @@ module.exports.getAddressCoordinates = async (address) => {
         if (response.data.status === 'OK') {
             const location = response.data.results[0].geometry.location;
             return {
-                lat: location.lat,
+                ltd: location.lat,
                 lng: location.lng
             };
         } else {
@@ -60,4 +62,15 @@ module.exports.getSuggestions = async (input) => {
         console.error('Error fetching suggestions:', error);
         throw new Error('Failed to fetch suggestions');
     }
+}
+
+module.exports.getCaptainsInTheRadius = async (lat, lng, radius) => {
+    const captains = await captainModel.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [[lng, lat], radius / 6378.1] // radius in kilometers
+            }
+        }
+    }, 'name vehicleType location'); // Only return necessary fields    
+    return captains;
 }

@@ -7,6 +7,7 @@ const connectToDb = require('./db/db'); // Import the database connection functi
 const userRoutes = require('./routes/user.routes'); // Import user routes
 const captainRoutes = require('./routes/captain.routes'); // Import captain routes
 const mapsRoutes = require('./routes/maps.routes'); // Import maps routes
+const rideRoutes = require('./routes/ride.routes'); // Import ride routes
 const cookieParser = require('cookie-parser'); // Import cookie parser middleware
 
 connectToDb(); // Connect to the database
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 app.use('/users', userRoutes); // Use user routes under /users
 app.use('/captains', captainRoutes); // Use captain routes under /captains
 app.use('/maps', mapsRoutes); // Use maps routes under /maps
+app.use('/rides', rideRoutes); // Use ride routes under /rides
 
 
 module.exports = app;

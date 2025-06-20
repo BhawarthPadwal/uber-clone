@@ -58,7 +58,7 @@ const captainSchema = new moongoose.Schema({
         }
     },
     location: {
-        lat: {
+        ltd: {
             type: Number,
         },
         lng: {
