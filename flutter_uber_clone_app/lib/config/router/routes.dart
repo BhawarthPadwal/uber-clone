@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
-import 'package:flutter_uber_clone_app/features/auth/screens/captain_login_screen.dart';
-import 'package:flutter_uber_clone_app/features/auth/screens/captain_signup_screen.dart';
-import 'package:flutter_uber_clone_app/features/auth/screens/user_login_screen.dart';
-import 'package:flutter_uber_clone_app/features/auth/screens/user_signup_screen.dart';
-import 'package:flutter_uber_clone_app/features/auth/screens/splash_screen.dart';
+import 'package:flutter_uber_clone_app/features/auth/screens/captain/captain_login_screen.dart';
+import 'package:flutter_uber_clone_app/features/auth/screens/captain/captain_signup_screen.dart';
+import 'package:flutter_uber_clone_app/features/auth/screens/user/user_login_screen.dart';
+import 'package:flutter_uber_clone_app/features/auth/screens/user/user_signup_screen.dart';
+import 'package:flutter_uber_clone_app/features/boarding_screens/boarding_screen.dart';
+import 'package:flutter_uber_clone_app/features/boarding_screens/splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../../features/home/screens/home_screen.dart';
 
 class Routes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
@@ -20,6 +23,10 @@ class Routes {
         return getPageTransition(CaptainLoginScreen(), settings);
       case AppRoutes.captainSignupScreen:
         return getPageTransition(CaptainSignupScreen(), settings);
+      case AppRoutes.homeScreen:
+        return getPageTransition(HomeScreen(), settings);
+      case AppRoutes.boardingScreen:
+        return getPageTransition(BoardingScreen(), settings);
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(body: Center(child: Text("Invalid Route"))),

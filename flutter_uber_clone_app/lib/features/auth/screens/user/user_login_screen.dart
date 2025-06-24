@@ -3,6 +3,7 @@ import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
 import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 class UserLoginScreen extends StatefulWidget {
   const UserLoginScreen({super.key});
@@ -15,6 +16,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _userLoginFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,19 +33,14 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Uber',
-                  style: TextStyle(
-                    fontSize: AppSizes.fontXXL,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 40),
+                AuthWidgets.uberLabel(),
+                AppWidgets.heightBox(AppSizes.padding20),
                 AuthWidgets.label("What's your email"),
-                SizedBox(height: AppSizes.paddingM),
+                AppWidgets.heightBox(AppSizes.paddingM),
                 AuthWidgets.textField(
-                  hintText: "email@example.com",
-                  controller: emailController,
+                  "email@example.com",
+                  emailController,
+                  isEmail: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Enter your email';
@@ -51,37 +48,41 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 30),
+                AppWidgets.heightBox(AppSizes.paddingM),
                 AuthWidgets.label("Enter Password"),
-                SizedBox(height: AppSizes.paddingM),
+                AppWidgets.heightBox(AppSizes.paddingM),
                 AuthWidgets.textField(
-                  hintText: "password",
+                  "Password",
                   isPassword: true,
-                  controller: passwordController,
+                  passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Enter your email';
+                      return 'Enter your password';
                     }
                     return null;
                   },
                 ),
-                SizedBox(height: 40),
+                AppWidgets.heightBox(AppSizes.padding40),
                 AuthWidgets.submitButton(
                   text: "Login",
                   onPressed: () {
                     if (_userLoginFormKey.currentState!.validate()) {
                       debugPrint('Form valid ✅');
+                      Navigator.pushNamed(context, AppRoutes.homeScreen);
                     } else {
                       debugPrint('Validation failed ❌');
                     }
                   },
                 ),
-                SizedBox(height: 10),
+                AppWidgets.heightBox(AppSizes.padding10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('New here?'),
-                    SizedBox(width: 5),
+                    Text(
+                      'New here?',
+                      style: TextStyle(fontSize: AppSizes.fontSmall),
+                    ),
+                    AppWidgets.widthBox(AppSizes.padding10 * 0.5),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
@@ -91,7 +92,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       },
                       child: Text(
                         'Create new Account',
-                        style: TextStyle(color: AppColors.bluishGrey),
+                        style: TextStyle(
+                          color: AppColors.bluishGrey,
+                          fontSize: AppSizes.fontSmall,
+                        ),
                       ),
                     ),
                   ],
@@ -107,7 +111,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     );
                   },
                 ),
-                SizedBox(height: AppSizes.padding20),
+                AppWidgets.heightBox(AppSizes.padding20),
               ],
             ),
           ),

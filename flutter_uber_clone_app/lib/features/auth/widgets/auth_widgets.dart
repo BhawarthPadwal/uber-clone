@@ -3,69 +3,139 @@ import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 
 class AuthWidgets {
-  /// Title Label (e.g., "What's your email")
+
+  static Widget uberLabel() {
+    return Text(
+      "Uber",
+      style: TextStyle(
+        fontSize: AppSizes.fontLarge,
+        color: AppColors.black,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
   static Widget label(String text) {
     return Text(
       text,
       style: TextStyle(
         fontSize: AppSizes.fontMedium,
         color: AppColors.black,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
 
-  /// Custom Text Form Field
-  static Widget textField({
-    required String hintText,
-    required TextEditingController controller,
-    String? Function(String?)? validator,
+  /*static Widget textField(String hintText, TextEditingController controller, String? Function(String?)? validator, {
+    bool isEmail = false,
     bool isPassword = false,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-      ),
-      child: TextFormField(
-        obscureText: isPassword,
-        style: TextStyle(fontSize: AppSizes.fontMedium),
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.all(AppSizes.paddingM),
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      style: TextStyle(fontSize: AppSizes.fontSmall),
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: AppColors.lightGrey,
+        contentPadding: EdgeInsets.all(AppSizes.paddingM),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
         ),
-        validator: validator,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        errorStyle: TextStyle(
+          fontSize: AppSizes.fontSmall,
+          color: Colors.red,
+          height: 1.2,
+        ),
+      ),
+    );
+  }*/
+
+  static Widget textField(
+      String hintText,
+      TextEditingController controller,
+      {
+        String? Function(String?)? validator,
+        bool isEmail = false,
+        bool isPassword = false,
+      }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      style: TextStyle(fontSize: AppSizes.fontSmall),
+      validator: (value) {
+        if (validator != null) {
+          final customError = validator(value);
+          if (customError != null) return customError;
+        }
+
+        if (isEmail) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your email';
+          }
+          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+          if (!emailRegex.hasMatch(value)) {
+            return 'Enter a valid email address';
+          }
+        }
+
+        return null; // All good
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: AppColors.lightGrey,
+        contentPadding: EdgeInsets.all(AppSizes.paddingM),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
+          borderSide: BorderSide.none,
+        ),
+        errorStyle: TextStyle(
+          fontSize: AppSizes.fontSmall,
+          color: Colors.red,
+          height: 1.2,
+        ),
       ),
     );
   }
 
-  /// Custom Dropdown Field
-  static Widget dropdownField({
-    required String hint,
-    required List<String> items,
-    required String? selectedValue,
-    required void Function(String?) onChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.lightGrey,
-        borderRadius: BorderRadius.circular(AppSizes.radiusM),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-      child: DropdownButtonFormField<String>(
-        value: selectedValue,
-        hint: Text(hint, style: TextStyle(fontSize: AppSizes.fontMedium)),
-        decoration: const InputDecoration(border: InputBorder.none),
-        style: TextStyle(fontSize: AppSizes.fontMedium),
-        items:
-            items.map((value) {
-              return DropdownMenuItem(value: value, child: Text(value));
-            }).toList(),
-        onChanged: onChanged,
-      ),
-    );
-  }
+
 
   static Widget submitButton({
     required String text,

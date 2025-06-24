@@ -4,6 +4,8 @@ import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 
+import '../../../../utils/widgets/app_widgets.dart';
+
 class CaptainLoginScreen extends StatefulWidget {
   const CaptainLoginScreen({super.key});
 
@@ -15,9 +17,11 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _captainLoginFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -31,21 +35,15 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Uber',
-                    style: TextStyle(
-                      fontSize: AppSizes.fontXXL,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Icon(Icons.arrow_forward, size: 40),
-                  SizedBox(height: 40),
+                  AuthWidgets.uberLabel(),
+                  Icon(Icons.arrow_forward, size: AppSizes.padding30),
+                  AppWidgets.heightBox(AppSizes.padding20),
                   AuthWidgets.label("What's your email"),
-                  SizedBox(height: AppSizes.paddingM),
+                  AppWidgets.heightBox(AppSizes.paddingM),
                   AuthWidgets.textField(
-                    hintText: "email@example.com",
-                    isPassword: false,
-                    controller: emailController,
+                    isEmail: true,
+                    "email@example.com",
+                    emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Enter your email';
@@ -53,37 +51,40 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 30),
+                  AppWidgets.heightBox(AppSizes.paddingM),
                   AuthWidgets.label("Enter Password"),
-                  SizedBox(height: AppSizes.paddingM),
+                  AppWidgets.heightBox(AppSizes.paddingM),
                   AuthWidgets.textField(
-                    hintText: "password",
+                    "Password",
                     isPassword: true,
-                    controller: passwordController,
+                    passwordController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter your email';
+                        return 'Enter your password';
                       }
                       return null;
                     },
                   ),
-                  SizedBox(height: 40),
+                  AppWidgets.heightBox(AppSizes.padding40),
                   AuthWidgets.submitButton(
                     text: "Login",
                     onPressed: () {
                       if (_captainLoginFormKey.currentState!.validate()) {
-                        debugPrint('Form valid ✅');
+                        debugPrint('Form valid');
                       } else {
-                        debugPrint('Validation failed ❌');
+                        debugPrint('Validation failed');
                       }
                     },
                   ),
-                  SizedBox(height: 10),
+                  AppWidgets.heightBox(AppSizes.padding10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Join a fleet?'),
-                      SizedBox(width: 5),
+                      Text(
+                        'Join a fleet?',
+                        style: TextStyle(fontSize: AppSizes.fontSmall),
+                      ),
+                      AppWidgets.widthBox(AppSizes.padding10 * 0.5),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushReplacementNamed(
@@ -100,13 +101,16 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                           },
                           child: Text(
                             'Register as a Captain',
-                            style: TextStyle(color: AppColors.bluishGrey),
+                            style: TextStyle(
+                              color: AppColors.bluishGrey,
+                              fontSize: AppSizes.fontSmall,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 250),
+                  AppWidgets.heightBox(330),
                   AuthWidgets.submitButton(
                     text: "Sign in as User",
                     onPressed: () {
@@ -117,7 +121,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                     },
                     backgroundColor: AppColors.orange,
                   ),
-                  SizedBox(height: AppSizes.padding20),
+                  AppWidgets.heightBox(AppSizes.padding20),
                 ],
               ),
             ),
