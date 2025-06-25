@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../config/router/app_routes.dart';
+import '../../storage/local_storage_service.dart';
 import '../../utils/constants/app_colors.dart';
 import '../../utils/constants/app_sizes.dart';
 import '../../utils/widgets/app_widgets.dart';
@@ -61,6 +62,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: GestureDetector(
                   onTap: () {
+                    LocalStorageService.setOnboardingCompleted(true);
                     Navigator.pushReplacementNamed(
                       context,
                       AppRoutes.userLoginScreen,

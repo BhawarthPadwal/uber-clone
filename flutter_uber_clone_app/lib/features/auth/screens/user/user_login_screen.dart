@@ -25,10 +25,14 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       bloc: authBloc,
       listenWhen: (previous, current) => current is AuthActionableState,
-      buildWhen: (previous, current) => current is !AuthActionableState,
+      buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
         if (state is NavigateToHomeScreen) {
           Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
+        } else if (state is AuthFailureState) {
+          AppWidgets.showSnackbar(context, message: state.message);
+        } else if (state is AuthSuccessState) {
+          AppWidgets.showSnackbar(context, message: state.message);
         }
       },
       builder: (context, state) {
@@ -83,8 +87,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                           debugPrint('Form valid');
                           authBloc.add(
                             UserLoginEvent(
-                              emailController.text,
-                              passwordController.text,
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
                             ));
                         } else {
                           debugPrint('Validation failed');
