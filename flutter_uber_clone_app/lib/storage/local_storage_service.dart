@@ -11,6 +11,7 @@ class LocalStorageService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+
   static Future<void> saveToken(String token) async {
     await _prefs.setString(_tokenKey, token);
   }

@@ -21,6 +21,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   AuthBloc authBloc = AuthBloc();
 
   @override
+  void dispose() {
+    super.dispose();
+    authBloc.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       bloc: authBloc,

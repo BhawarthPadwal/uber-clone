@@ -14,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitialState()) {
 
     on<UserLoginEvent>(userLoginEvent);
+    on<UserSignupEvent>(userSignupEvent);
   }
 
   FutureOr<void> userLoginEvent(UserLoginEvent event, Emitter<AuthState> emit) async {
@@ -34,5 +35,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       AppLogger.e(e);
     }
+  }
+
+  FutureOr<void> userSignupEvent(UserSignupEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoadingState());
+    try {
+      final result = await ApiManager.post(ApiReqEndpoints.getCaptainLogin(), {
+        "email" : event.email,
+        "password" : event.password,
+      });
+      AppLogger.d(result);
+      if (result['status'] == 200) {
+        LocalStorageService.saveToken(result['data']['token']);
+        emit(NavigateToHomeScreen());
+      } else {
+        emit(AuthFailureState(message: result['data']['message']));
+        AppLogger.e(result['data']['message']);
+      }
+    } catch (e) {
+      AppLogger.e(e);
+    }
+
   }
 }

@@ -8,6 +8,10 @@ class ApiReqEndpoints {
   static const _usersPath = '/users';
   static const _captainsPath = '/captains';
 
+  static String getRefreshToken() {
+    return '$BASE_URL$_usersPath/verify-token';
+  }
+
   static String getUserLogin() {
     return '$BASE_URL$_usersPath/login';
   }

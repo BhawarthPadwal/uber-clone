@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
+import 'package:flutter_uber_clone_app/services/api_service.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
@@ -23,9 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    /*Timer(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.boardingScreen);
-    });*/
     _handleNavigation();
     super.initState();
   }
@@ -39,15 +37,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!hasOnBoarded) {
       Navigator.pushReplacementNamed(context, AppRoutes.boardingScreen);
-    } else if (token != null) {
-      if (JwtDecoder.isExpired(token)) {
-        LocalStorageService.clearToken();
-        Navigator.pushReplacementNamed(context, AppRoutes.userLoginScreen);
-      }
-      Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
-    } else {
+    }
+
+    if (token == null) {
       Navigator.pushReplacementNamed(context, AppRoutes.userLoginScreen);
     }
+
+    final isTokenRefreshed = await ApiService.refreshToken();
+    final nextRoute = isTokenRefreshed
+        ? AppRoutes.homeScreen
+        : AppRoutes.userLoginScreen;
+
+    Navigator.pushReplacementNamed(context, nextRoute);
   }
 
   @override
