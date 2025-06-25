@@ -24,7 +24,7 @@ class ApiManager {
         'data': parsedBody,
       };
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         AppLogger.d(result);
       } else {
         AppLogger.e(result);

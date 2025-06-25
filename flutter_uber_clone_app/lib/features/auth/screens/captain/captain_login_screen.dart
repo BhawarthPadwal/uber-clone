@@ -6,6 +6,7 @@ import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 
+import '../../../../utils/ui_helpers/ui_helpers.dart';
 import '../../../../utils/widgets/app_widgets.dart';
 
 class CaptainLoginScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
       listenWhen: (previous, current) => current is AuthActionableState,
       buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
-        // TODO: implement listener
+        AppUiHelper.handleAuthState(context, state);
       },
       builder: (context, state) {
         return Scaffold(
@@ -87,14 +88,13 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                         text: "Login",
                         onPressed: () {
                           if (_captainLoginFormKey.currentState!.validate()) {
-                            debugPrint('Form valid');
                             authBloc.add(
                               CaptainLoginEvent(
-                                emailController.text.trim(),
-                                passwordController.text.trim(),
+                                emailController.text,
+                                passwordController.text,
                               ));
                           } else {
-                            debugPrint('Validation failed');
+                            AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
                           }
                         },
                       ),

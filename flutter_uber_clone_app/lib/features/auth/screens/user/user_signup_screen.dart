@@ -7,6 +7,8 @@ import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
+import '../../../../utils/ui_helpers/ui_helpers.dart';
+
 class UserSignupScreen extends StatefulWidget {
   const UserSignupScreen({super.key});
 
@@ -26,14 +28,22 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   @override
   void dispose() {
     super.dispose();
+    firstNameController.dispose();
+    lastNameControlller.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmpasswordController.dispose();
     authBloc.close();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
+      bloc: authBloc,
+      listenWhen: (previous, current) => current is AuthActionableState,
+      buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
-        // TODO: implement listener
+        AppUiHelper.handleAuthState(context, state);
       },
       builder: (context, state) {
         return Scaffold(
@@ -64,9 +74,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               firstNameController,
                               validator:
                                   (value) =>
-                              (value == null || value.isEmpty)
-                                  ? 'Enter your firstname'
-                                  : null,
+                                      (value == null || value.isEmpty)
+                                          ? 'Enter your firstname'
+                                          : null,
                             ),
                           ),
                           AppWidgets.widthBox(AppSizes.padding20),
@@ -87,9 +97,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                         isEmail: true,
                         validator:
                             (value) =>
-                        (value == null || value.isEmpty)
-                            ? 'Enter your email'
-                            : null,
+                                (value == null || value.isEmpty)
+                                    ? 'Enter your email'
+                                    : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.label("Enter Password"),
@@ -98,10 +108,11 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                         "Password",
                         passwordController,
                         isPassword: true,
-                        validator: (value) =>
-                        (value == null || value.isEmpty)
-                            ? 'Enter your password'
-                            : null,
+                        validator:
+                            (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Enter your password'
+                                    : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.label("Confirm Password"),
@@ -110,19 +121,37 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                         "Confirm Password",
                         confirmpasswordController,
                         isPassword: true,
-                        validator: (value) =>
-                        (value == null || value.isEmpty)
-                            ? 'Confirm your password'
-                            : null,
+                        validator:
+                            (value) =>
+                                (value == null || value.isEmpty)
+                                    ? 'Confirm your password'
+                                    : null,
                       ),
                       AppWidgets.heightBox(AppSizes.padding40),
                       AuthWidgets.submitButton(
                         text: "Create account",
                         onPressed: () {
                           if (_userSignUpFormKey.currentState!.validate()) {
-                            debugPrint('Form valid');
+                            if (passwordController.text !=
+                                confirmpasswordController.text) {
+                              AppWidgets.showSnackbar(
+                                context,
+                                message: 'Passwords do not match',
+                              );
+                              return;
+                            }
+                            authBloc.add(
+                              UserSignupEvent(
+                                {
+                                  "firstname": firstNameController.text,
+                                  "lastname": lastNameControlller.text,
+                                },
+                                emailController.text,
+                                confirmpasswordController.text,
+                              ),
+                            );
                           } else {
-                            debugPrint('Validation failed');
+                            AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
                           }
                         },
                       ),

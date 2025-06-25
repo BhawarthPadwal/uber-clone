@@ -16,8 +16,8 @@ class ApiReqEndpoints {
     return '$BASE_URL$_usersPath/login';
   }
 
-  static String getUserSignup() {
-    return '$BASE_URL$_usersPath/signup';
+  static String getUserRegister() {
+    return '$BASE_URL$_usersPath/register';
   }
 
   static String getCaptainLogin() {
@@ -25,6 +25,6 @@ class ApiReqEndpoints {
   }
 
   static String getCaptainSignup() {
-    return '$BASE_URL$_captainsPath/signup';
+    return '$BASE_URL$_captainsPath/register';
   }
 }

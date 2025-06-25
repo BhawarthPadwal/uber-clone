@@ -5,6 +5,7 @@ import 'package:flutter_uber_clone_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/ui_helpers/ui_helpers.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 class UserLoginScreen extends StatefulWidget {
@@ -23,6 +24,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   @override
   void dispose() {
     super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     authBloc.close();
   }
 
@@ -33,13 +36,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       listenWhen: (previous, current) => current is AuthActionableState,
       buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
-        if (state is NavigateToHomeScreen) {
-          Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
-        } else if (state is AuthFailureState) {
-          AppWidgets.showSnackbar(context, message: state.message);
-        } else if (state is AuthSuccessState) {
-          AppWidgets.showSnackbar(context, message: state.message);
-        }
+        AppUiHelper.handleAuthState(context, state);
       },
       builder: (context, state) {
         return Scaffold(
@@ -90,14 +87,13 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       text: "Login",
                       onPressed: () {
                         if (_userLoginFormKey.currentState!.validate()) {
-                          debugPrint('Form valid');
                           authBloc.add(
                             UserLoginEvent(
                               emailController.text.trim(),
                               passwordController.text.trim(),
                             ));
                         } else {
-                          debugPrint('Validation failed');
+                          AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
                         }
                       },
                     ),

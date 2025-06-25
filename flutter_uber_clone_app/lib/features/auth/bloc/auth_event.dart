@@ -17,12 +17,19 @@ final class CaptainLoginEvent extends AuthEvent {
   CaptainLoginEvent(this.email, this.password);
 }
 
-
 final class UserSignupEvent extends AuthEvent {
   final Map<String, dynamic> fullname;
   final String email;
   final String password;
   UserSignupEvent(this.fullname, this.email, this.password);
+}
+
+final class CaptainSignupEvent extends AuthEvent {
+  final Map<String, dynamic> fullname;
+  final String email;
+  final String password;
+  final Map<String, dynamic> vehicle;
+  CaptainSignupEvent(this.fullname, this.email, this.password, this.vehicle);
 }
 final class SignUpNavigationEvent extends AuthEvent {}
 
