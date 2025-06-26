@@ -7,6 +7,7 @@ class ApiReqEndpoints {
   static final String BASE_URL = dotenv.env['BASE_URL']!;
   static const _usersPath = '/users';
   static const _captainsPath = '/captains';
+  static const _mapsPath = '/maps';
 
   static String getRefreshToken() {
     return '$BASE_URL$_usersPath/verify-token';
@@ -26,5 +27,9 @@ class ApiReqEndpoints {
 
   static String getCaptainSignup() {
     return '$BASE_URL$_captainsPath/register';
+  }
+
+  static String getMapSuggestion(String input) {
+    return '$BASE_URL$_mapsPath/get-suggestions?input=$input';
   }
 }
