@@ -15,14 +15,23 @@ final class MapSuggestionsLoadedState extends HomeState {
   MapSuggestionsLoadedState(this.mapSuggestions, this.description);
 }
 
+final class MapDistanceDurationLoadedState extends HomeActionableState {
+  final List<VehicleFare> vehicleFare;
+  final String distance;
+  final String duration;
+  MapDistanceDurationLoadedState(this.vehicleFare, this.distance, this.duration);
+}
+
 final class MapSuggestionsErrorState extends HomeActionableState {
   final String error;
   MapSuggestionsErrorState(this.error);
 }
 
-final class MapSuggestionsEmptyState extends HomeActionableState {
+final class MapDistanceDurationErrorState extends HomeActionableState {
   final String error;
-  MapSuggestionsEmptyState(this.error);
+  MapDistanceDurationErrorState(this.error);
 }
 
 final class MapSuggestionsLoadingState extends HomeState {}
+
+final class MapDistanceDurationLoadingState extends HomeState {}

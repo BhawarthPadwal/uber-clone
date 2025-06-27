@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/services/api_service.dart';
 import 'package:flutter_uber_clone_app/utils/api/api_manager.dart';
 import 'package:flutter_uber_clone_app/utils/api/api_req_endpoints.dart';
@@ -11,31 +12,37 @@ import 'package:meta/meta.dart';
 import '../models/map_suggestion_model.dart';
 
 part 'home_event.dart';
+
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<GetMapSuggestionsEvent>(getMapSuggestionsEvent);
+    on<GetDistanceDurationFareEvent>(getDistanceDurationFare);
   }
 
-
-  FutureOr<void> getMapSuggestionsEvent(GetMapSuggestionsEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> getMapSuggestionsEvent(
+    GetMapSuggestionsEvent event,
+    Emitter<HomeState> emit,
+  ) async {
     emit(MapSuggestionsLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.getMapSuggestion(event.query));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.getMapSuggestion(event.query),
+      );
       AppLogger.d(result);
 
       if (result['status'] == 200) {
-        final List<MapSuggestions> suggestions = mapSuggestionsFromJson(json.encode(result['data']));
-        final List<String> descriptions = suggestions.map((s) => s.description).toList();
+        final List<MapSuggestions> suggestions = mapSuggestionsFromJson(
+          json.encode(result['data']),
+        );
+        final List<String> descriptions =
+            suggestions.map((s) => s.description).toList();
 
         AppLogger.d(suggestions);
         AppLogger.d(descriptions);
 
-        emit(MapSuggestionsLoadedState(
-          suggestions,
-          descriptions,
-        ));
+        emit(MapSuggestionsLoadedState(suggestions, descriptions));
       } else {
         emit(MapSuggestionsErrorState(result['data']['message']));
       }
@@ -45,20 +52,36 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-
-/*FutureOr<void> getMapSuggestionsEvent(GetMapSuggestionsEvent event, Emitter<HomeState> emit) async {
-    emit (MapSuggestionsLoadingState());
+  FutureOr<void> getDistanceDurationFare(
+    GetDistanceDurationFareEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(MapDistanceDurationLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.getMapSuggestion(event.query));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.getFare(event.pickup, event.destination),
+      );
       AppLogger.d(result);
       if (result['status'] == 200) {
-        emit (MapSuggestionsLoadedState(mapSuggestionsFromJson(result['data'])));
+        final Map<String, dynamic> fare = result['data']['fare'];
+        final distance = result['data']['distanceTime']['distance']['text'];
+        final duration = result['data']['distanceTime']['duration']['text'];
+        AppLogger.d(fare);
+        AppLogger.d(distance);
+        AppLogger.d(duration);
+        final List<dynamic> vehicleFare = fare.entries.map((e) {
+          return VehicleFare(type: e.key, amount: e.value);
+        }).toList();
+
+        final List<VehicleFare> vehicleFareList = fare.entries.map((e) => VehicleFare(type: e.key, amount: e.value)).toList();
+
+        emit(MapDistanceDurationLoadedState(vehicleFareList, distance, duration));
       } else {
-        emit (MapSuggestionsErrorState(result['data']['message']));
+        emit(MapDistanceDurationErrorState(result['data']['message']));
       }
     } catch (e) {
       AppLogger.e(e);
-      emit (MapSuggestionsErrorState(e.toString()));
+      emit(MapDistanceDurationErrorState(e.toString()));
     }
-  }*/
+  }
 }
