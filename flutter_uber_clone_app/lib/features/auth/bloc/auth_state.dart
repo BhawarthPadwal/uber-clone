@@ -25,3 +25,5 @@ final class NavigateToCaptainLoginScreenState extends AuthActionableState {}
 
 final class NavigateToHomeScreen extends AuthActionableState {}
 
+final class NavigateToCaptainHomeScreen extends AuthActionableState {}
+

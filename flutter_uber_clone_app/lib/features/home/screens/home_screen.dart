@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
 import 'package:flutter_uber_clone_app/features/home/bloc/home_bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/choose_vehicles_bottom_sheet.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/home_widgets.dart';
@@ -163,6 +164,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: AppSizes.fontXL,
                       color: AppColors.black,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 10,
+                  top: 60,
+                  child: GestureDetector(
+                    onTap: () {
+                      LocalStorageService.clearToken();
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        AppRoutes.userLoginScreen,
+                        (route) => false,
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Icon(Icons.logout),
                     ),
                   ),
                 ),

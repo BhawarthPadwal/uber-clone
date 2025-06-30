@@ -7,4 +7,6 @@ class AppRoutes {
   static const String captainLoginScreen = '/captainLogin';
 
   static const String homeScreen = '/home';
+
+  static const String captainHomeScreen = '/captainHome';
 }
