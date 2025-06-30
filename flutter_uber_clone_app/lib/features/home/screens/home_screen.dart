@@ -2,17 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/features/home/bloc/home_bloc.dart';
+import 'package:flutter_uber_clone_app/features/home/widgets/choose_vehicles_bottom_sheet.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/home_widgets.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:logger/logger.dart';
 
 import '../../../utils/constants/app_colors.dart';
 
@@ -87,12 +85,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _collapseSheet() {
+    sheetController.animateTo(
+      0.25,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       AppLogger.i('Debounced search for: $query');
       homeBloc.add(GetMapSuggestionsEvent(query));
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    homeBloc.close();
+    super.dispose();
   }
 
   @override
@@ -105,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is MapSuggestionsErrorState) {
           AppWidgets.showSnackbar(context, message: state.error);
         }
-        if (state is MapDistanceDurationLoadedState) {
+        if (state is OpenBottomSheetState) {
           AppLogger.d("Inside state");
           showModalBottomSheet(
             context: context,
@@ -114,11 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) {
               return BlocProvider.value(
                 value: homeBloc,
-                child: HomeWidgets.showVehicleWidget(context),
+                child: ChooseVehiclesBottomSheet(),
               );
             },
           );
-
         }
       },
       builder: (context, state) {
@@ -157,13 +169,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 DraggableScrollableSheet(
                   controller: sheetController,
                   initialChildSize: 0.3,
-                  minChildSize: 0.25,
-                  maxChildSize: 0.95,
+                  minChildSize: 0.3,
+                  maxChildSize: 0.9,
                   builder: (context, scrollController) {
                     return Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
@@ -183,10 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          AppWidgets.heightBox(AppSizes.padding10),
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               child: SingleChildScrollView(
                                 controller: scrollController,
                                 child: Column(
@@ -236,7 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Visibility(
                                       visible: false,
                                       child: ElevatedButton(
-                                        onPressed: () => LocalStorageService.clearToken(),
+                                        onPressed:
+                                            () =>
+                                                LocalStorageService.clearToken(),
                                         child: const Text('Logout'),
                                       ),
                                     ),
@@ -244,48 +263,75 @@ class _HomeScreenState extends State<HomeScreen> {
                                       HomeWidgets.buildShimmerLoader()
                                     else if (state is MapSuggestionsLoadedState)
                                       ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        itemCount: state.description.length,
-                                        itemBuilder: (context, index) {
-                                          final description = state.description[index];
-                                          return Column(
-                                            children: [
-                                              ListTile(
-                                                leading: const Icon(Icons.location_on, color: AppColors.black),
-                                                title: Text(
-                                                  description,
-                                                  style: const TextStyle(
-                                                    fontSize: AppSizes.fontMedium,
-                                                    color: AppColors.black,
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  if (isPickUpSelected) {
-                                                    pickupController.text = description;
-                                                  } else {
-                                                    destinationController.text = description;
-                                                  }
-
-                                                  if (pickupController.text.isNotEmpty &&
-                                                      destinationController.text.isNotEmpty) {
-                                                    homeBloc.add(
-                                                      GetDistanceDurationFareEvent(
-                                                        pickupController.text,
-                                                        destinationController.text,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: state.description.length,
+                                            itemBuilder: (context, index) {
+                                              final description =
+                                                  state.description[index];
+                                              return Column(
+                                                children: [
+                                                  ListTile(
+                                                    leading: const Icon(
+                                                      Icons.location_on,
+                                                      color: AppColors.black,
+                                                    ),
+                                                    title: Text(
+                                                      description,
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            AppSizes.fontMedium,
+                                                        color: AppColors.black,
                                                       ),
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                              const Divider(height: 1, color: Colors.grey),
-                                            ],
-                                          );
-                                        },
-                                      )
+                                                    ),
+                                                    onTap: () {
+                                                      if (isPickUpSelected) {
+                                                        pickupController.text =
+                                                            description;
+                                                      } else {
+                                                        destinationController
+                                                            .text = description;
+                                                      }
+
+                                                      if (pickupController
+                                                              .text
+                                                              .isNotEmpty &&
+                                                          destinationController
+                                                              .text
+                                                              .isNotEmpty) {
+                                                        homeBloc.add(
+                                                          GetDistanceDurationFareEvent(
+                                                            pickupController
+                                                                .text,
+                                                            destinationController
+                                                                .text,
+                                                          ),
+                                                        );
+                                                        homeBloc.add(
+                                                          OpenBottomSheetEvent(),
+                                                        );
+                                                        /*setState(() {
+                                                          _collapseSheet();
+                                                        });*/
+                                                      }
+                                                    },
+                                                  ),
+                                                  const Divider(
+                                                    height: 1,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          )
                                           .animate()
                                           .fade(duration: 1000.ms)
-                                          .slideY(begin: 0.2, duration: 1000.ms, curve: Curves.easeOut),
+                                          .slideY(
+                                            begin: 0.2,
+                                            duration: 1000.ms,
+                                            curve: Curves.easeOut,
+                                          ),
                                   ],
                                 ),
                               ),

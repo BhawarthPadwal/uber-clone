@@ -19,6 +19,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<GetMapSuggestionsEvent>(getMapSuggestionsEvent);
     on<GetDistanceDurationFareEvent>(getDistanceDurationFare);
+    on<OpenBottomSheetEvent>(openBottomSheetEvent);
+    on<SelectedVehicleIndexEvent>(selectedVehicleIndexEvent);
+    on<OpenSearchCaptainBottomSheetEvent>(openSearchCaptainBottomSheetEvent);
+    on<RideCreatedEvent>(rideCreatedEvent);
   }
 
   FutureOr<void> getMapSuggestionsEvent(
@@ -69,13 +73,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         AppLogger.d(fare);
         AppLogger.d(distance);
         AppLogger.d(duration);
-        final List<dynamic> vehicleFare = fare.entries.map((e) {
-          return VehicleFare(type: e.key, amount: e.value);
-        }).toList();
+        final List<dynamic> vehicleFare =
+            fare.entries.map((e) {
+              return VehicleFare(type: e.key, amount: e.value);
+            }).toList();
 
-        final List<VehicleFare> vehicleFareList = fare.entries.map((e) => VehicleFare(type: e.key, amount: e.value)).toList();
+        final List<VehicleFare> vehicleFareList =
+            fare.entries
+                .map((e) => VehicleFare(type: e.key, amount: e.value))
+                .toList();
 
-        emit(MapDistanceDurationLoadedState(vehicleFareList, distance, duration));
+        emit(
+          MapDistanceDurationListLoadedState(
+            vehicleFareList,
+            distance,
+            duration,
+            0,
+          ),
+        );
       } else {
         emit(MapDistanceDurationErrorState(result['data']['message']));
       }
@@ -83,5 +98,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       AppLogger.e(e);
       emit(MapDistanceDurationErrorState(e.toString()));
     }
+  }
+
+  FutureOr<void> openBottomSheetEvent(
+    OpenBottomSheetEvent event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(OpenBottomSheetState());
+  }
+
+  FutureOr<void> selectedVehicleIndexEvent(
+    SelectedVehicleIndexEvent event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(
+      MapDistanceDurationListLoadedState(
+        event.vehicleFare,
+        event.distance,
+        event.duration,
+        event.index,
+      ),
+    );
+  }
+
+  FutureOr<void> openSearchCaptainBottomSheetEvent(OpenSearchCaptainBottomSheetEvent event, Emitter<HomeState> emit) {
+    emit(OpenSearchCaptainBottomSheetState());
+  }
+
+  FutureOr<void> rideCreatedEvent(RideCreatedEvent event, Emitter<HomeState> emit) async {
+    emit(RideCreatedState());
   }
 }
