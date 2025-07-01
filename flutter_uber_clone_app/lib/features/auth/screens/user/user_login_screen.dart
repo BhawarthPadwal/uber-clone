@@ -91,9 +91,13 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             UserLoginEvent(
                               emailController.text.trim(),
                               passwordController.text.trim(),
-                            ));
+                            ),
+                          );
                         } else {
-                          AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
+                          AppWidgets.showSnackbar(
+                            context,
+                            message: 'Kindly fill all fields',
+                          );
                         }
                       },
                     ),

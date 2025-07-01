@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
-import 'package:flutter_uber_clone_app/features/auth/bloc/auth_bloc.dart';
+import 'package:flutter_uber_clone_app/features/captain/bloc/captain_bloc.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
-import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -23,7 +22,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   Set<Marker> _markers = {};
-  AuthBloc authBloc = AuthBloc();
+  CaptainBloc captainBloc = CaptainBloc();
   LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
 
   @override
@@ -69,24 +68,9 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      bloc: authBloc,
-      listenWhen: (previous, current) => current is AuthActionableState,
-      buildWhen: (previous, current) => current is! AuthActionableState,
-      listener: (context, state) {
-        if (state is AuthFailureState) {
-          AppWidgets.showSnackbar(context, message: state.message);
-        } else if (state is AuthSuccessState) {
-          AppWidgets.showSnackbar(context, message: state.message);
-        } else if (state is NavigateToSignUpScreenState) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.captainSignupScreen,
-          );
-        } else if (state is NavigateToCaptainHomeScreen) {
-          Navigator.pushReplacementNamed(context, AppRoutes.captainHomeScreen);
-        }
-      },
+    return BlocConsumer<CaptainBloc, CaptainState>(
+      bloc: captainBloc,
+      listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
           body: SafeArea(

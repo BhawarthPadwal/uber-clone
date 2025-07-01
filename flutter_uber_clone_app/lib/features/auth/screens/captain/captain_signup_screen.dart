@@ -54,7 +54,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
       listenWhen: (previous, current) => current is AuthActionableState,
       buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
-        AppUiHelper.handleAuthState(context, state);
+        AppUiHelper.handleCapAuthState(context, state);
       },
       builder: (context, state) {
         return Scaffold(
@@ -303,7 +303,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                                   "firstname":
                                       firstNameTextEditingController.text,
                                   "lastname":
-                                      lastNameTextEditingController.text,
+                                      lastNameTextEditingController.text ?? "",
                                 },
                                 emailTextEditingController.text,
                                 confirmPasswordController.text,

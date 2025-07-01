@@ -32,7 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 200) {
         LocalStorageService.saveToken(result['data']['token']);
-        emit(NavigateToHomeScreen());
+        emit(NavigateToUserHomeScreen());
       } else {
         emit(AuthFailureState(message: result['data']['message']));
         AppLogger.e(result['data']['message']);
@@ -56,7 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 201) {
         LocalStorageService.saveToken(result['data']['token']);
-        emit(NavigateToHomeScreen());
+        emit(NavigateToUserLoginScreenState());
       } else {
         emit(AuthFailureState(message: result['data']['message']));
         AppLogger.e(result['data']['message']);
@@ -79,7 +79,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 200) {
         LocalStorageService.saveToken(result['data']['token']);
-        emit(NavigateToHomeScreen());
+        emit(NavigateToCaptainHomeScreen());
       } else {
         emit(AuthFailureState(message: result['data']['message']));
         AppLogger.e(result['data']['message']);
@@ -104,9 +104,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 201) {
         LocalStorageService.saveToken(result['data']['token']);
-        emit(NavigateToHomeScreen());
+        emit(NavigateToCaptainLoginScreenState());
+      } else {
+        emit(AuthFailureState(message: result['data']['message']));
+        AppLogger.e(result['data']['message']);
       }
     } catch (e) {
+      emit(AuthFailureState(message: e.toString()));
       AppLogger.e(e);
     }
   }

@@ -144,14 +144,17 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               UserSignupEvent(
                                 {
                                   "firstname": firstNameController.text,
-                                  "lastname": lastNameControlller.text,
+                                  "lastname": lastNameControlller.text ?? "",
                                 },
                                 emailController.text,
                                 confirmpasswordController.text,
                               ),
                             );
                           } else {
-                            AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
+                            AppWidgets.showSnackbar(
+                              context,
+                              message: 'Kindly fill all fields',
+                            );
                           }
                         },
                       ),

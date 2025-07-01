@@ -35,7 +35,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
       listenWhen: (previous, current) => current is AuthActionableState,
       buildWhen: (previous, current) => current is! AuthActionableState,
       listener: (context, state) {
-        AppUiHelper.handleAuthState(context, state);
+        AppUiHelper.handleCapAuthState(context, state);
       },
       builder: (context, state) {
         return Scaffold(
@@ -92,9 +92,13 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                               CaptainLoginEvent(
                                 emailController.text,
                                 passwordController.text,
-                              ));
+                              ),
+                            );
                           } else {
-                            AppWidgets.showSnackbar(context, message: 'Kindly fill all fields');
+                            AppWidgets.showSnackbar(
+                              context,
+                              message: 'Kindly fill all fields',
+                            );
                           }
                         },
                       ),
