@@ -32,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 200) {
         LocalStorageService.saveToken(result['data']['token']);
+        LocalStorageService.setCurrentAccess('user');
         emit(NavigateToUserHomeScreen());
       } else {
         emit(AuthFailureState(message: result['data']['message']));
@@ -79,6 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AppLogger.d(result);
       if (result['status'] == 200) {
         LocalStorageService.saveToken(result['data']['token']);
+        LocalStorageService.setCurrentAccess('captain');
         emit(NavigateToCaptainHomeScreen());
       } else {
         emit(AuthFailureState(message: result['data']['message']));

@@ -6,9 +6,22 @@ class LocalStorageService {
 
   static final String _tokenKey = dotenv.env['PREF_KEY']!;
   static const String _onboardingKey = 'onboarding_done';
+  static const String _isCurrentAccess = 'current_access';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  static Future<void> setCurrentAccess(String currentAccess) async {
+    await _prefs.setString(_isCurrentAccess, currentAccess);
+  }
+
+  static String? getCurrentAccess() {
+    return _prefs.getString(_isCurrentAccess);
+  }
+
+  static Future<void> clearCurrentAccess() async {
+    await _prefs.remove(_isCurrentAccess);
   }
 
 

@@ -33,19 +33,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final hasOnBoarded = LocalStorageService.hasCompletedOnboarding();
     final token = LocalStorageService.getToken();
+    final isLoggedIn = LocalStorageService.getCurrentAccess();
     AppLogger.d(token);
 
     if (!hasOnBoarded) {
       Navigator.pushReplacementNamed(context, AppRoutes.boardingScreen);
     }
 
-    if (token == null) {
+    if (token == null || isLoggedIn == null) { // second condition doubtful
       Navigator.pushReplacementNamed(context, AppRoutes.userLoginScreen);
     }
 
     final isTokenRefreshed = await ApiService.refreshToken();
     final nextRoute = isTokenRefreshed
-        ? AppRoutes.homeScreen
+        ? ((isLoggedIn == 'user') ? AppRoutes.homeScreen : AppRoutes.captainHomeScreen)
         : AppRoutes.userLoginScreen;
 
     Navigator.pushReplacementNamed(context, nextRoute);

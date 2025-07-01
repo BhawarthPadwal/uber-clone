@@ -173,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                     onTap: () {
                       LocalStorageService.clearToken();
+                      LocalStorageService.clearCurrentAccess();
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         AppRoutes.userLoginScreen,

@@ -34,7 +34,7 @@ class HomeWidgets {
     );
   }
 
-  static String vehicleImage(String vehicleType) {
+  /*static String vehicleImage(String vehicleType) {
     if (vehicleType == 'auto') {
       return AppAssets.autoImg;
     } else if (vehicleType == 'car') {
@@ -290,5 +290,5 @@ class HomeWidgets {
         }
       },
     );
-  }
+  }*/
 }
