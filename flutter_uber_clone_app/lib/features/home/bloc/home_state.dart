@@ -41,8 +41,22 @@ final class MapDistanceDurationLoadingState extends HomeState {}
 
 final class OpenBottomSheetState extends HomeActionableState {}
 
-final class OpenSearchCaptainBottomSheetState extends HomeActionableState {}
+final class OpenSearchCaptainBottomSheetState extends HomeActionableState {
+  final List<VehicleFare> vehicleFare;
+  final Map<String, dynamic> distanceDuration;
+  OpenSearchCaptainBottomSheetState(this.vehicleFare, this.distanceDuration);
+}
 
-final class RideCreatedState extends HomeActionableState {}
+final class RideCreatedState extends HomeActionableState {
+  final Map<String, dynamic> rideData;
+  RideCreatedState(this.rideData);
+}
+
+final class RideCreatedLoadingState extends HomeState {}
+
+final class RideCreatedResponseMessageState extends HomeState {
+  final String error;
+  RideCreatedResponseMessageState(this.error);
+}
 
 

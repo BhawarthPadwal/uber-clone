@@ -128,7 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) {
               return BlocProvider.value(
                 value: homeBloc,
-                child: ChooseVehiclesBottomSheet(),
+                child: ChooseVehiclesBottomSheet(points: {
+                  "pickup": pickupController.text,
+                  "destination": destinationController.text
+                }),
               );
             },
           );

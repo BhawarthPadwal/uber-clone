@@ -121,11 +121,36 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> openSearchCaptainBottomSheetEvent(OpenSearchCaptainBottomSheetEvent event, Emitter<HomeState> emit) {
-    emit(OpenSearchCaptainBottomSheetState());
+  FutureOr<void> openSearchCaptainBottomSheetEvent(
+    OpenSearchCaptainBottomSheetEvent event,
+    Emitter<HomeState> emit,
+  ) {
+    emit(OpenSearchCaptainBottomSheetState(event.fare, event.distanceDuration));
   }
 
-  FutureOr<void> rideCreatedEvent(RideCreatedEvent event, Emitter<HomeState> emit) async {
-    emit(RideCreatedState());
+  FutureOr<void> rideCreatedEvent(
+    RideCreatedEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(RideCreatedLoadingState());
+    try {
+      final result = await ApiManager.postWithHeader(
+        ApiReqEndpoints.postRideCreated(),
+        {
+          "pickup": event.pickup,
+          "destination": event.destination,
+          'vehicleType': event.vehicleType,
+        },
+      );
+      AppLogger.d(result);
+      if (result['status'] == 201) {
+        emit(RideCreatedState(result['data']));
+      } else {
+        emit(RideCreatedResponseMessageState(result['data']['message']));
+      }
+    } catch (e) {
+      AppLogger.e(e);
+      emit(RideCreatedResponseMessageState(e.toString()));
+    }
   }
 }

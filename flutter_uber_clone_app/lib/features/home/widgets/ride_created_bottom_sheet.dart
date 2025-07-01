@@ -7,9 +7,13 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/app_widgets.dart';
 import '../bloc/home_bloc.dart';
+import '../models/vehicle_fare_model.dart';
 
-class RideCreatedWidget extends StatefulWidget {
-  const RideCreatedWidget({super.key});
+class RideCreatedWidget extends StatefulWidget { // Data should be fetch from api instead of widgets... api call done
+  final Map<String, dynamic> points;
+  final List<VehicleFare> fare;
+  final Map<String, dynamic> distanceDuration;
+  const RideCreatedWidget({super.key, required this.points, required this.fare, required this.distanceDuration});
 
   @override
   State<RideCreatedWidget> createState() => _RideCreatedWidgetState();
@@ -85,34 +89,44 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                       children: [
                         Image.asset(AppAssets.pinIcon, height: 30),
                         AppWidgets.widthBox(AppSizes.padding10),
-                        Text(
-                          'Current Location',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontMedium,
-                            color: AppColors.black,
+                        Expanded(
+                          child: Text(
+                            widget.points['pickup'],
+                            style: TextStyle(
+                              fontSize: AppSizes.fontMedium,
+                              color: AppColors.black,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(),
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
                         Icon(Icons.location_on, color: AppColors.black),
                         AppWidgets.widthBox(AppSizes.padding10),
-                        Text(
-                          'Destination Location',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontMedium,
-                            color: AppColors.black,
+                        Expanded(
+                          child: Text(
+                            widget.points['destination'],
+                            style: TextStyle(
+                              fontSize: AppSizes.fontMedium,
+                              color: AppColors.black,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(),
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -120,7 +134,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                         Icon(Icons.credit_card_sharp, color: AppColors.black),
                         AppWidgets.widthBox(AppSizes.padding10),
                         Text(
-                          '₹ 101',
+                          '₹ ${widget.fare[0].amount.toString()}',
                           style: TextStyle(
                             fontSize: AppSizes.fontMedium,
                             color: AppColors.black,
@@ -129,7 +143,6 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                       ],
                     ),
                   ),
-                  Divider(),
                   AppWidgets.heightBox(AppSizes.padding20),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -137,7 +150,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                       },
                       child: Container(
                         height: 60,

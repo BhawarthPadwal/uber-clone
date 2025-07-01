@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/search_captain_bottom_sheet.dart';
+import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 
 import '../../../utils/constants/app_assets.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -9,7 +11,9 @@ import '../../../utils/widgets/app_widgets.dart';
 import '../bloc/home_bloc.dart';
 
 class ChooseVehiclesBottomSheet extends StatefulWidget {
-  const ChooseVehiclesBottomSheet({super.key});
+  final Map<String, dynamic> points;
+
+  const ChooseVehiclesBottomSheet({super.key, required this.points});
 
   @override
   State<ChooseVehiclesBottomSheet> createState() =>
@@ -44,6 +48,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
       buildWhen: (previous, current) => current is! HomeActionableState,
       listener: (context, state) {
         if (state is OpenSearchCaptainBottomSheetState) {
+          Navigator.pop(context);
           showModalBottomSheet(
             context: context,
             backgroundColor: Colors.white,
@@ -51,7 +56,11 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
             builder: (context) {
               return BlocProvider.value(
                 value: context.read<HomeBloc>(),
-                child: SearchCaptainBottomSheet(),
+                child: SearchCaptainBottomSheet(
+                  points: widget.points,
+                  fare: state.vehicleFare,
+                  distanceDuration: state.distanceDuration,
+                ),
               );
             },
           );
@@ -132,14 +141,14 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                                   vertical: 10,
                                 ),
                                 elevation:
-                                index == state.selectedVehicleIndex
-                                    ? 10 // Selected color
-                                    : 2,
+                                    index == state.selectedVehicleIndex
+                                        ? 10 // Selected color
+                                        : 2,
                                 surfaceTintColor:
-                                index == state.selectedVehicleIndex
-                                    ? Colors
-                                    .grey // Selected color
-                                    : AppColors.white,
+                                    index == state.selectedVehicleIndex
+                                        ? Colors
+                                            .grey // Selected color
+                                        : AppColors.white,
                                 color: AppColors.white,
                                 // Default color
                                 child: Padding(
@@ -149,7 +158,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                                   ),
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
                                         children: [
@@ -168,7 +177,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                                       ),
                                       Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -245,9 +254,23 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          BlocProvider.of<HomeBloc>(
-                            context,
-                          ).add(OpenSearchCaptainBottomSheetEvent());
+                          BlocProvider.of<HomeBloc>(context).add(
+                            OpenSearchCaptainBottomSheetEvent(
+                              [vehicleFares[state.selectedVehicleIndex]],
+                              {
+                                "distance": state.distance,
+                                "duration": state.duration,
+                              },
+                            ),
+                          );
+                          AppLogger.d(widget.points['pickup'] + widget.points['destination']+ vehicleFares[state.selectedVehicleIndex].type);
+                          BlocProvider.of<HomeBloc>(context).add(
+                            RideCreatedEvent(
+                              widget.points['pickup'],
+                              widget.points['destination'],
+                              vehicleFares[state.selectedVehicleIndex].type,
+                            ),
+                          );
                         },
                         child: Container(
                           height: 60,
@@ -259,8 +282,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                           ),
                           child: Center(
                             child: Text(
-                              'BOOK A ${vehicleFares[state.selectedVehicleIndex]
-                                  .type.toUpperCase()}',
+                              'BOOK A ${vehicleFares[state.selectedVehicleIndex].type.toUpperCase()}',
                               style: TextStyle(
                                 fontSize: AppSizes.fontMedium,
                                 color: AppColors.white,

@@ -36,5 +36,10 @@ class ApiReqEndpoints {
   static String getFare(String pickup, String destination) {
     return '$BASE_URL$_ridesPath/fare?pickup=$pickup&destination=$destination';
   }
+
+  static String postRideCreated() {
+    return '$BASE_URL$_ridesPath/create';
+  }
 }
+
 

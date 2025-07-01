@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/bloc/home_bloc.dart';
+import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/ride_created_bottom_sheet.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
@@ -10,7 +11,10 @@ import 'package:lottie/lottie.dart';
 import '../../../utils/constants/app_sizes.dart';
 
 class SearchCaptainBottomSheet extends StatefulWidget {
-  const SearchCaptainBottomSheet({super.key});
+  final Map<String, dynamic> points;
+  final List<VehicleFare> fare;
+  final Map<String, dynamic> distanceDuration;
+  const SearchCaptainBottomSheet({super.key, required this.points, required this.fare, required this.distanceDuration});
 
   @override
   State<SearchCaptainBottomSheet> createState() =>
@@ -21,10 +25,9 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
-      BlocProvider.of<HomeBloc>(context).add(RideCreatedEvent());
+    Future.delayed(const Duration(minutes: 5), () {
+      // BlocProvider.of<HomeBloc>(context).add(RideCreatedEvent());
     });
   }
 
@@ -34,7 +37,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
       listenWhen: (previous, current) => current is HomeActionableState,
       buildWhen: (previous, current) => current is! HomeActionableState,
       listener: (context, state) {
-        if (state is RideCreatedState) {
+            if (state is RideCreatedState) {
           Navigator.of(context).pop();
           showModalBottomSheet(
             context: context,
@@ -43,7 +46,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
             builder:
                 (context) => BlocProvider.value(
                   value: context.read<HomeBloc>(),
-                  child: const RideCreatedWidget(),
+                  child: RideCreatedWidget(points: widget.points, fare: widget.fare, distanceDuration: widget.distanceDuration),
                 ),
           );
         }
@@ -117,34 +120,44 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                       children: [
                         Image.asset(AppAssets.pinIcon, height: 30),
                         AppWidgets.widthBox(AppSizes.padding10),
-                        Text(
-                          'Current Location',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontMedium,
-                            color: AppColors.black,
+                        Expanded(
+                          child: Text(
+                            widget.points['pickup'],
+                            style: TextStyle(
+                              fontSize: AppSizes.fontMedium,
+                              color: AppColors.black,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(),
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
                         Icon(Icons.location_on, color: AppColors.black),
                         AppWidgets.widthBox(AppSizes.padding10),
-                        Text(
-                          'Destination Location',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontMedium,
-                            color: AppColors.black,
+                        Expanded(
+                          child: Text(
+                            widget.points['destination'],
+                            style: TextStyle(
+                              fontSize: AppSizes.fontMedium,
+                              color: AppColors.black,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(),
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -152,7 +165,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                         Icon(Icons.credit_card_sharp, color: AppColors.black),
                         AppWidgets.widthBox(AppSizes.padding10),
                         Text(
-                          '₹ 101',
+                          '₹ ${widget.fare[0].amount.toString()}',
                           style: TextStyle(
                             fontSize: AppSizes.fontMedium,
                             color: AppColors.black,
@@ -161,7 +174,6 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                       ],
                     ),
                   ),
-                  Divider(),
                   AppWidgets.heightBox(AppSizes.padding20),
                   Padding(
                     padding: const EdgeInsets.symmetric(
