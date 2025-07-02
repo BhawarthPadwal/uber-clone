@@ -4,3 +4,5 @@ part of 'captain_bloc.dart';
 sealed class CaptainEvent {}
 
 final class OpenBottomSheetOnUserRideReqEvent extends CaptainEvent {}
+
+final class GetCaptainProfileEvent extends CaptainEvent {}

@@ -37,13 +37,6 @@ final class OpenSearchCaptainBottomSheetEvent extends HomeEvent {
   final Map<String, dynamic> distanceDuration;
   OpenSearchCaptainBottomSheetEvent(this.fare, this.distanceDuration);
 }
-// for api call
-/*final class CreateRideEvent extends HomeEvent {
-  final String pickup;
-  final String destination;
-  final String vehicleType;
-  CreateRideEvent(this.pickup, this.destination, this.vehicleType);
-}*/
 
 final class RideCreatedEvent extends HomeEvent {
   final String pickup;
@@ -51,3 +44,5 @@ final class RideCreatedEvent extends HomeEvent {
   final String vehicleType;
   RideCreatedEvent(this.pickup, this.destination, this.vehicleType);
 }
+
+final class GetUserProfileEvent extends HomeEvent {}

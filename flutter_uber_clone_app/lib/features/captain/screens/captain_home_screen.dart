@@ -8,9 +8,12 @@ import 'package:flutter_uber_clone_app/features/captain/widgets/user_ride_reques
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../../../services/socket_service.dart';
 
 class CaptainHomeScreen extends StatefulWidget {
   const CaptainHomeScreen({super.key});
@@ -32,13 +35,17 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     super.dispose();
   }
 
+  void initSocket(String userId, String userType) {
+    final socketService = SocketService();
+    socketService.connect(userId: userId, userType: userType);
+    //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
+  }
+
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
-    Future.delayed(const Duration(seconds: 5), () {
-      captainBloc.add(OpenBottomSheetOnUserRideReqEvent());
-    });
+    captainBloc.add(GetCaptainProfileEvent());
   }
 
   Future<void> _getCurrentLocation() async {
@@ -81,8 +88,12 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     return BlocConsumer<CaptainBloc, CaptainState>(
       bloc: captainBloc,
       listenWhen: (previous, current) => current is CaptainActionableState,
-      buildWhen: (previous, current) => current is! CaptainActionableState,
+      buildWhen: (previous, current) => true,
       listener: (context, state) {
+        if (state is FetchCaptainProfileState) {
+          AppLogger.i("👨‍✈️ Captain profile fetched");
+          initSocket(state.profile['_id'], 'captain');
+        }
         if (state is OpenBottomSheetOnUserRideReqState) {
           showModalBottomSheet(
             context: context,
@@ -188,13 +199,14 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               ),
                               // Image.asset('assets/images/profile.jpg', width: 40, height: 40)),
                               AppWidgets.widthBox(AppSizes.padding10),
-                              Text(
-                                "Firstname Lastname",
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontMedium,
-                                  fontWeight: FontWeight.w700,
+                              if (state is FetchCaptainProfileState)
+                                Text(
+                                  "${state.profile['fullname']['firstname'].toString().toUpperCase()} ${state.profile['fullname']['lastname'].toString().toUpperCase()}",
+                                  style: TextStyle(
+                                    fontSize: AppSizes.fontMedium,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
                               Spacer(),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

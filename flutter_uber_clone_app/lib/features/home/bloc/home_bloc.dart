@@ -9,6 +9,7 @@ import 'package:flutter_uber_clone_app/utils/api/api_req_endpoints.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:meta/meta.dart';
 
+import '../../../services/socket_service.dart';
 import '../models/map_suggestion_model.dart';
 
 part 'home_event.dart';
@@ -23,6 +24,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SelectedVehicleIndexEvent>(selectedVehicleIndexEvent);
     on<OpenSearchCaptainBottomSheetEvent>(openSearchCaptainBottomSheetEvent);
     on<RideCreatedEvent>(rideCreatedEvent);
+    on<GetUserProfileEvent>(getUserProfileEvent);
   }
 
   FutureOr<void> getMapSuggestionsEvent(
@@ -151,6 +153,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       AppLogger.e(e);
       emit(RideCreatedResponseMessageState(e.toString()));
+    }
+  }
+
+  FutureOr<void> getUserProfileEvent(GetUserProfileEvent event, Emitter<HomeState> emit) async {
+    emit(FetchUserProfileLoadingState());
+    try {
+      final result = await ApiManager.getWithHeader(ApiReqEndpoints.getUserProfile());
+      AppLogger.d(result);
+      final Map<String, dynamic> userProfile = result['data'];
+      AppLogger.d(userProfile);
+      if (result['status'] == 200) {
+        emit(FetchUserProfileState(userProfile));
+        AppLogger.d(result['data']);
+      } else {
+        emit(FetchUserProfileMessageResponseState(result['data']['message']));
+        AppLogger.e(result['data']['message']);
+      }
+    } catch (e) {
+      AppLogger.e(e);
     }
   }
 }

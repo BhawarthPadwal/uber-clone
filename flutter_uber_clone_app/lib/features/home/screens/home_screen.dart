@@ -13,6 +13,7 @@ import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../services/socket_service.dart';
 import '../../../utils/constants/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,10 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
 
+  void initSocket(String userId, String userType) {
+    final socketService = SocketService();
+    socketService.connect(userId: userId, userType: userType);
+    //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
+  }
+
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    homeBloc.add(GetUserProfileEvent());
   }
 
   Future<void> _getCurrentLocation() async {
@@ -116,6 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
       listenWhen: (previous, current) => current is HomeActionableState,
       buildWhen: (previous, current) => current is! HomeActionableState,
       listener: (context, state) {
+        if (state is FetchUserProfileState) {
+          AppLogger.i("👨‍✈️ User profile fetched");
+          initSocket(state.userProfile['_id'], 'user');
+        }
         if (state is MapSuggestionsErrorState) {
           AppWidgets.showSnackbar(context, message: state.error);
         }

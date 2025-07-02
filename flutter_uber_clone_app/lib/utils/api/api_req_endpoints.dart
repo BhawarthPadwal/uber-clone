@@ -25,8 +25,16 @@ class ApiReqEndpoints {
     return '$BASE_URL$_captainsPath/login';
   }
 
+  static String getUserProfile() {
+    return '$BASE_URL$_usersPath/profile';
+  }
+
   static String getCaptainSignup() {
     return '$BASE_URL$_captainsPath/register';
+  }
+
+  static String getCaptainProfile() {
+    return '$BASE_URL$_captainsPath/profile';
   }
 
   static String getMapSuggestion(String input) {

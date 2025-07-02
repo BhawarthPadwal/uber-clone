@@ -59,4 +59,16 @@ final class RideCreatedResponseMessageState extends HomeState {
   RideCreatedResponseMessageState(this.error);
 }
 
+final class FetchUserProfileLoadingState extends HomeState {}
+
+final class FetchUserProfileState extends HomeActionableState {
+  final Map<String, dynamic> userProfile;
+  FetchUserProfileState(this.userProfile);
+}
+
+final class FetchUserProfileMessageResponseState extends HomeState {
+  final String message;
+  FetchUserProfileMessageResponseState(this.message);
+}
+
 
