@@ -120,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is FetchUserProfileState) {
           AppLogger.i("👨‍✈️ User profile fetched");
           initSocket(state.userProfile['_id'], 'user');
+          //listenCaptainConfirmation();
         }
         if (state is MapSuggestionsErrorState) {
           AppWidgets.showSnackbar(context, message: state.error);

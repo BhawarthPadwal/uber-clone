@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_uber_clone_app/features/captain/bloc/captain_bloc.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_enum.dart';
@@ -46,6 +48,8 @@ class _UserRideRequestBottomSheetState
   Widget build(BuildContext context) {
     final Map<String, dynamic> rideRequest = widget.rideRequest;
     AppLogger.d(rideRequest);
+    return BlocBuilder<CaptainBloc, CaptainState>(
+  builder: (context, state) {
     return DraggableScrollableSheet(
       controller: sheetController,
       initialChildSize: rideStatus == RideStatus.accepted ? 0.75 : 0.65,
@@ -237,6 +241,8 @@ class _UserRideRequestBottomSheetState
                         switch (rideStatus) {
                           case RideStatus.pending:
                             // Accept the ride
+                          AppLogger.d(rideRequest['_id']);
+                            BlocProvider.of<CaptainBloc>(context).add(AcceptRideEvent(rideRequest['_id']));
                             rideStatus = RideStatus.accepted;
                             break;
 
@@ -249,12 +255,19 @@ class _UserRideRequestBottomSheetState
                               );
                               AppLogger.i('Please enter OTP');
                               return;
+                            } else {
+                              final String otp = otpController.text.trim();
+                              AppLogger.i('OTP: $otp');
+                              BlocProvider.of<CaptainBloc>(context).add(StartRideEvent(rideRequest['_id'], otp));
+                              otpController.clear();
+                              rideStatus = RideStatus.confirmed;
                             }
-                            rideStatus = RideStatus.confirmed;
                             break;
 
                           case RideStatus.confirmed:
                             // Ride complete
+                            BlocProvider.of<CaptainBloc>(context).add(EndRideEvent(rideRequest['_id']));
+                            rideStatus = RideStatus.pending;
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               AppWidgets.showSnackbar(
                                 context,
@@ -326,5 +339,7 @@ class _UserRideRequestBottomSheetState
         );
       },
     );
+  },
+);
   }
 }

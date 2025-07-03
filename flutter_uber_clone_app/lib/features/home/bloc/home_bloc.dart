@@ -25,6 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<OpenSearchCaptainBottomSheetEvent>(openSearchCaptainBottomSheetEvent);
     on<RideCreatedEvent>(rideCreatedEvent);
     on<GetUserProfileEvent>(getUserProfileEvent);
+    on<OpenBottomSheetOnCaptainConfirmationEvent>(openBottomSheetOnCaptainConfirmationEvent);
   }
 
   FutureOr<void> getMapSuggestionsEvent(
@@ -173,5 +174,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       AppLogger.e(e);
     }
+  }
+
+  FutureOr<void> openBottomSheetOnCaptainConfirmationEvent(OpenBottomSheetOnCaptainConfirmationEvent event, Emitter<HomeState> emit) {
+    emit(OpenBottomSheetOnCaptainConfirmationState(event.data));
   }
 }

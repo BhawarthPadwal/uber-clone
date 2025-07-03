@@ -71,4 +71,9 @@ final class FetchUserProfileMessageResponseState extends HomeState {
   FetchUserProfileMessageResponseState(this.message);
 }
 
+final class OpenBottomSheetOnCaptainConfirmationState extends HomeActionableState {
+  final Map<String, dynamic> data;
+  OpenBottomSheetOnCaptainConfirmationState(this.data);
+}
+
 

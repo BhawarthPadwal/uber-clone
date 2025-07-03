@@ -10,10 +10,8 @@ import '../bloc/home_bloc.dart';
 import '../models/vehicle_fare_model.dart';
 
 class RideCreatedWidget extends StatefulWidget { // Data should be fetch from api instead of widgets... api call done
-  final Map<String, dynamic> points;
-  final List<VehicleFare> fare;
-  final Map<String, dynamic> distanceDuration;
-  const RideCreatedWidget({super.key, required this.points, required this.fare, required this.distanceDuration});
+  final Map<String, dynamic> rideData;
+  const RideCreatedWidget({super.key, required this.rideData});
 
   @override
   State<RideCreatedWidget> createState() => _RideCreatedWidgetState();
@@ -22,6 +20,7 @@ class RideCreatedWidget extends StatefulWidget { // Data should be fetch from ap
 class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   @override
   Widget build(BuildContext context) {
+    final rideData = widget.rideData;
     return BlocConsumer<HomeBloc, HomeState>(
       listenWhen: (previous, current) => current is HomeActionableState,
       buildWhen: (previous, current) => current is! HomeActionableState,
@@ -72,11 +71,11 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text("Captain Name", style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w500)),
-                            Text("MH 02 PP 2227", style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w900)),
-                            Text("Hyundai i10", style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w500)),
+                            Text('${rideData['captain']['fullname']['firstname']} ${rideData['captain']['fullname']['lastname']}', style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w500)),
+                            Text(rideData['captain']['vehicle']['plate'], style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w900)),
+                            Text(rideData['captain']['vehicle']['vehicleType'] == 'car' ? "Hyundai i10" : 'Hero Splender' , style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.w500)),
                             AppWidgets.heightBox(5),
-                            Text("OTP: 785632", style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.bold)),
+                            Text(rideData['otp'], style: TextStyle(fontSize: AppSizes.fontMedium, fontWeight: FontWeight.bold)),
                           ],
                         )
                       ],
@@ -91,7 +90,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                         AppWidgets.widthBox(AppSizes.padding10),
                         Expanded(
                           child: Text(
-                            widget.points['pickup'],
+                            rideData['pickup'] ?? '',
                             style: TextStyle(
                               fontSize: AppSizes.fontMedium,
                               color: AppColors.black,
@@ -113,7 +112,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                         AppWidgets.widthBox(AppSizes.padding10),
                         Expanded(
                           child: Text(
-                            widget.points['destination'],
+                            rideData['destination'] ?? '',
                             style: TextStyle(
                               fontSize: AppSizes.fontMedium,
                               color: AppColors.black,
@@ -134,7 +133,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                         Icon(Icons.credit_card_sharp, color: AppColors.black),
                         AppWidgets.widthBox(AppSizes.padding10),
                         Text(
-                          '₹ ${widget.fare[0].amount.toString()}',
+                          '₹ ${rideData['fare']}',
                           style: TextStyle(
                             fontSize: AppSizes.fontMedium,
                             color: AppColors.black,

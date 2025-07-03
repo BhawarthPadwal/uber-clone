@@ -24,3 +24,39 @@ final class FetchCaptainProfileResponseState extends CaptainState {
   FetchCaptainProfileResponseState(this.message);
 }
 
+final class AcceptRideLoadingState extends CaptainState {}
+
+final class AcceptRideState extends CaptainActionableState {
+  final Map<String, dynamic> ride;
+  AcceptRideState(this.ride);
+}
+
+final class AcceptRideResponseState extends CaptainState {
+  final String message;
+  AcceptRideResponseState(this.message);
+}
+
+final class StartRideLoadingState extends CaptainState {}
+
+final class StartRideState extends CaptainState {
+  final Map<String, dynamic> ride;
+  StartRideState(this.ride);
+}
+
+final class StartRideResponseState extends CaptainActionableState {
+  final String message;
+  StartRideResponseState(this.message);
+}
+
+final class EndRideLoadingState extends CaptainState {}
+
+final class EndRideState extends CaptainState {
+  final Map<String, dynamic> ride;
+  EndRideState(this.ride);
+}
+
+final class EndRideResponseState extends CaptainActionableState {
+  final String message;
+  EndRideResponseState(this.message);
+}
+

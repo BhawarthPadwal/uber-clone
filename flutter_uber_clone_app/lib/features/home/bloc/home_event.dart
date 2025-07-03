@@ -38,6 +38,11 @@ final class OpenSearchCaptainBottomSheetEvent extends HomeEvent {
   OpenSearchCaptainBottomSheetEvent(this.fare, this.distanceDuration);
 }
 
+final class OpenBottomSheetOnCaptainConfirmationEvent extends HomeEvent {
+  final Map<String, dynamic> data;
+  OpenBottomSheetOnCaptainConfirmationEvent(this.data);
+}
+
 final class RideCreatedEvent extends HomeEvent {
   final String pickup;
   final String destination;

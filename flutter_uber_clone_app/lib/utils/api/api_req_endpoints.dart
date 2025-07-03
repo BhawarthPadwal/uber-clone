@@ -48,6 +48,19 @@ class ApiReqEndpoints {
   static String postRideCreated() {
     return '$BASE_URL$_ridesPath/create';
   }
+
+ /// Captain side apis
+  static String confirmRide(String rideId) {
+    return '$BASE_URL$_ridesPath/confirm?rideId=$rideId';
+  }
+
+  static String startRide(String rideId, String otp) {
+    return '$BASE_URL$_ridesPath/start-ride?rideId=$rideId&otp=$otp';
+  }
+
+  static String endRide(String rideId) {
+    return '$BASE_URL$_ridesPath/end-ride?rideId=$rideId';
+  }
 }
 
 

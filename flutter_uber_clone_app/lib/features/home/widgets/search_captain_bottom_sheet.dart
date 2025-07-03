@@ -3,18 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/bloc/home_bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/ride_created_bottom_sheet.dart';
+import 'package:flutter_uber_clone_app/services/socket_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../utils/constants/app_sizes.dart';
+import '../../../utils/logger/app_logger.dart';
 
 class SearchCaptainBottomSheet extends StatefulWidget {
   final Map<String, dynamic> points;
   final List<VehicleFare> fare;
   final Map<String, dynamic> distanceDuration;
-  const SearchCaptainBottomSheet({super.key, required this.points, required this.fare, required this.distanceDuration});
+
+  const SearchCaptainBottomSheet({
+    super.key,
+    required this.points,
+    required this.fare,
+    required this.distanceDuration,
+  });
 
   @override
   State<SearchCaptainBottomSheet> createState() =>
@@ -22,13 +30,26 @@ class SearchCaptainBottomSheet extends StatefulWidget {
 }
 
 class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
+  late SocketService socketService;
+
+  void listenCaptainConfirmation() {
+    socketService.socket.on('ride-confirmed', (data) {
+      AppLogger.i("Ride Confirmed $data");
+      BlocProvider.of<HomeBloc>(context).add(OpenBottomSheetOnCaptainConfirmationEvent(data));
+      //\\captainBloc.add(OpenBottomSheetOnUserRideReqEvent(data));
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(minutes: 5), () {
+    socketService = SocketService();
+    listenCaptainConfirmation();
+    //captainBloc.add(GetUserProfileEvent());
+    /*Future.delayed(const Duration(minutes: 5), () {
       // BlocProvider.of<HomeBloc>(context).add(RideCreatedEvent());
-    });
+    });*/
+
   }
 
   @override
@@ -37,7 +58,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
       listenWhen: (previous, current) => current is HomeActionableState,
       buildWhen: (previous, current) => current is! HomeActionableState,
       listener: (context, state) {
-            if (state is RideCreatedState) {
+        if (state is OpenBottomSheetOnCaptainConfirmationState) {
           Navigator.of(context).pop();
           showModalBottomSheet(
             context: context,
@@ -46,7 +67,9 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
             builder:
                 (context) => BlocProvider.value(
                   value: context.read<HomeBloc>(),
-                  child: RideCreatedWidget(points: widget.points, fare: widget.fare, distanceDuration: widget.distanceDuration),
+                  child: RideCreatedWidget(
+                   rideData: state.data,
+                  ),
                 ),
           );
         }
@@ -132,10 +155,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                       ],
                     ),
                   ),
-                  Divider(
-                    indent: 20,
-                    endIndent: 20,
-                  ),
+                  Divider(indent: 20, endIndent: 20),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -154,10 +174,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                       ],
                     ),
                   ),
-                  Divider(
-                    indent: 20,
-                    endIndent: 20,
-                  ),
+                  Divider(indent: 20, endIndent: 20),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
