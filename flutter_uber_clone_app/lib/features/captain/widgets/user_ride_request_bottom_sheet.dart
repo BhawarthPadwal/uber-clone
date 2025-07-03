@@ -8,7 +8,8 @@ import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 class UserRideRequestBottomSheet extends StatefulWidget {
-  const UserRideRequestBottomSheet({super.key});
+  final Map<String, dynamic> userRequest;
+  const UserRideRequestBottomSheet({super.key, required this.userRequest});
 
   @override
   State<UserRideRequestBottomSheet> createState() =>

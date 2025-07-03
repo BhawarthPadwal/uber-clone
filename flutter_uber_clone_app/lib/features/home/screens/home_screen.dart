@@ -47,11 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
     homeBloc.add(GetUserProfileEvent());
   }
 
-  Future<void> _getCurrentLocation() async {
+  /*Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
     // Check if location services are enabled
@@ -84,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
-  }
+  }*/
 
   void _expandSheet() {
     sheetController.animateTo(
@@ -112,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     homeBloc.close();
     super.dispose();
   }

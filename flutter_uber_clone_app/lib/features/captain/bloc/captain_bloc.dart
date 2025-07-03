@@ -17,7 +17,8 @@ class CaptainBloc extends Bloc<CaptainEvent, CaptainState> {
   }
 
   FutureOr<void> openBottomSheetOnUserRideReqEvent(OpenBottomSheetOnUserRideReqEvent event, Emitter<CaptainState> emit) {
-    emit(OpenBottomSheetOnUserRideReqState());
+    AppLogger.i('📥 Emitting bottom sheet with: ${event.userRequest}');
+    emit(OpenBottomSheetOnUserRideReqState(event.userRequest));
   }
 
   FutureOr<void> getCaptainProfileEvent(GetCaptainProfileEvent event, Emitter<CaptainState> emit) async {

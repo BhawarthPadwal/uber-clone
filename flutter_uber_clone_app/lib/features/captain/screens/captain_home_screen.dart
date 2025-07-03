@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +30,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   Set<Marker> _markers = {};
   CaptainBloc captainBloc = CaptainBloc();
   LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
+  late SocketService socketService;
   @override
   void dispose() {
     captainBloc.close();
@@ -36,19 +38,28 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   }
 
   void initSocket(String userId, String userType) {
-    final socketService = SocketService();
+    log("I am here ");
     socketService.connect(userId: userId, userType: userType);
+
+    log("I am here too");
     //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
+    // Listen for new ride event from server
+    socketService.socket.on('new-ride', (data) {
+      AppLogger.i("🚖 New ride received: $data");
+      log("I got new ride function");
+      // Dispatch event to open bottom sheet
+      captainBloc.add(OpenBottomSheetOnUserRideReqEvent(data));
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    /*_getCurrentLocation();*/
     captainBloc.add(GetCaptainProfileEvent());
   }
 
-  Future<void> _getCurrentLocation() async {
+  /*Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
     // Check if location services are enabled
@@ -81,7 +92,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     });
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +101,13 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
       listenWhen: (previous, current) => current is CaptainActionableState,
       buildWhen: (previous, current) => true,
       listener: (context, state) {
+        AppLogger.i("🧠 State changed: ${state.runtimeType}");
         if (state is FetchCaptainProfileState) {
           AppLogger.i("👨‍✈️ Captain profile fetched");
           initSocket(state.profile['_id'], 'captain');
         }
         if (state is OpenBottomSheetOnUserRideReqState) {
+          AppLogger.i("📤 Showing bottom sheet with: ${state.userRequest}");
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -102,7 +115,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
             builder:
                 (context) => BlocProvider.value(
                   value: captainBloc,
-                  child: const UserRideRequestBottomSheet(),
+                  child: UserRideRequestBottomSheet(userRequest: state.userRequest),
                 ),
           );
         }

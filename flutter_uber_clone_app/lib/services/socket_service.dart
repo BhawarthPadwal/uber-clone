@@ -13,7 +13,7 @@ class SocketService {
   void connect({required String userId, required String userType}) {
     AppLogger.i("🚀 Attempting to connect to socket...");
 
-    socket = IO.io('http://192.168.0.116:4000', {
+    socket = IO.io('http://192.168.0.111:4000', {
       // change if on emulator
       'transports': ['websocket'],
       'autoConnect': false,
@@ -38,6 +38,10 @@ class SocketService {
 
     socket.onDisconnect((_) {
       AppLogger.i("🔌 Disconnected from server");
+    });
+
+    socket.on('new-ride', (data) {
+      AppLogger.i("🚖 New Ride Request: $data");
     });
   }
 
