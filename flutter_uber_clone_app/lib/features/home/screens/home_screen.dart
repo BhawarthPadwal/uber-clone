@@ -35,11 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   Set<Marker> _markers = {};
-
+  late SocketService socketService;
   LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
 
   void initSocket(String userId, String userType) {
-    final socketService = SocketService();
     socketService.connect(userId: userId, userType: userType);
     //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
   }
@@ -47,11 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    // _getCurrentLocation();
+    socketService = SocketService();
     homeBloc.add(GetUserProfileEvent());
   }
 
-  Future<void> _getCurrentLocation() async {
+  /*Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
     // Check if location services are enabled
@@ -84,19 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
-  }
+  }*/
 
   void _expandSheet() {
     sheetController.animateTo(
       1.0,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _collapseSheet() {
-    sheetController.animateTo(
-      0.25,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
@@ -112,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _debounce?.cancel();
+    socketService.socket.disconnect();
     homeBloc.close();
     super.dispose();
   }

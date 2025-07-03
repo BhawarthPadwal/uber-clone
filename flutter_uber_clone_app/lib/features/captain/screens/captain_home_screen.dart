@@ -26,9 +26,11 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   bool isPickUpSelected = true;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
   CaptainBloc captainBloc = CaptainBloc();
-  LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
+  final LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
+  late SocketService socketService;
+
   @override
   void dispose() {
     captainBloc.close();
@@ -36,7 +38,6 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   }
 
   void initSocket(String userId, String userType) {
-    final socketService = SocketService();
     socketService.connect(userId: userId, userType: userType);
     //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
   }
@@ -44,11 +45,35 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    // _getCurrentLocation();
+    socketService = SocketService();
     captainBloc.add(GetCaptainProfileEvent());
   }
 
-  Future<void> _getCurrentLocation() async {
+  void listenUserRequest() {
+    socketService.socket.on('new-ride', (data) {
+      AppLogger.i("New Ride Message $data");
+      captainBloc.add(OpenBottomSheetOnUserRideReqEvent(data));
+    });
+  }
+
+  void startLocationUpdates(String userId) {
+    Timer.periodic(Duration(seconds: 10), (timer) {
+      final data = {
+        'userId': userId,
+        'location': {
+          'ltd': _currentPosition.latitude,
+          'lng': _currentPosition.longitude,
+        }
+      };
+      AppLogger.i('Data to be emit: $data');
+      socketService.emit('update-location-captain', data);
+    });
+    AppLogger.i("📍 Started sending location updates every 10 seconds.");
+  }
+
+
+  /*Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
     // Check if location services are enabled
@@ -81,7 +106,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     });
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +118,8 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
         if (state is FetchCaptainProfileState) {
           AppLogger.i("👨‍✈️ Captain profile fetched");
           initSocket(state.profile['_id'], 'captain');
+          startLocationUpdates(state.profile['_id']);
+          listenUserRequest();
         }
         if (state is OpenBottomSheetOnUserRideReqState) {
           showModalBottomSheet(
@@ -102,7 +129,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
             builder:
                 (context) => BlocProvider.value(
                   value: captainBloc,
-                  child: const UserRideRequestBottomSheet(),
+                  child: UserRideRequestBottomSheet(rideRequest: state.rideRequest),
                 ),
           );
         }

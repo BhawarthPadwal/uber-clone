@@ -13,7 +13,7 @@ class SocketService {
   void connect({required String userId, required String userType}) {
     AppLogger.i("🚀 Attempting to connect to socket...");
 
-    socket = IO.io('http://192.168.0.116:4000', {
+    socket = IO.io('http://192.168.0.111:4000', {
       // change if on emulator
       'transports': ['websocket'],
       'autoConnect': false,
@@ -21,6 +21,10 @@ class SocketService {
 
     socket.connect();
     AppLogger.i("⏳ Connecting...");
+
+    socket.on('new-ride', (data) {
+      AppLogger.i("New Ride Message");
+    });
 
     socket.onConnect((_) {
       AppLogger.i("✅ Connected: ${socket.id}");
@@ -39,58 +43,24 @@ class SocketService {
     socket.onDisconnect((_) {
       AppLogger.i("🔌 Disconnected from server");
     });
+
+    socket.onReconnect((_) {
+      AppLogger.i("🔄 Reconnected");
+      socket.emit('join', {'userId': userId, 'userType': userType});
+    });
+
+    /*socket.on((data) {
+      AppLogger.i("🚗 Captain location updated: $data");
+      socket.emit('update-location-captain', data);
+    });*/
   }
 
-  /*void connect({required String userId, required String userType}) {
-    socket = IO.io('http://192.168.0.116:4000', {
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-
-
-    socket.connect();
-
-    socket.onConnect((_) {
-      print("Connected: ${socket.id}");
-
-      // Join socket
-      socket.emit('join', {
-        'userId': userId,
-        'userType': userType, // 'user' or 'captain'
-      });
-    });
-
-    socket.onDisconnect((_) {
-      print("Disconnected");
-    });
-
-    // Example listener
-    socket.on('new-ride', (data) {
-      print("🚖 New Ride Request: $data");
-      // show a dialog or handle in bloc
-    });
-
-    socket.on('ride-confirmed', (data) {
-      print("✅ Ride confirmed: $data");
-    });
-
-    socket.on('ride-started', (data) {
-      print("🏁 Ride started: $data");
-    });
-
-    socket.on('ride-completed', (data) {
-      print("🛑 Ride completed: $data");
-    });
+  void emit(String event, dynamic data) {
+    if (socket.connected) {
+      AppLogger.i("📤 Emitting $event: $data");
+      socket.emit(event, data);
+    } else {
+      AppLogger.i("⚠️ Cannot emit $event. Socket not connected.");
+    }
   }
-
-  void updateLocation(String captainId, Map<String, dynamic> location) {
-    socket.emit('update-location-captain', {
-      'userId': captainId,
-      'location': location,
-    });
-  }
-
-  void disconnect() {
-    socket.disconnect();
-  }*/
 }

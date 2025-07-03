@@ -8,7 +8,8 @@ import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 class UserRideRequestBottomSheet extends StatefulWidget {
-  const UserRideRequestBottomSheet({super.key});
+  final Map<String, dynamic> rideRequest;
+  const UserRideRequestBottomSheet({super.key, required this.rideRequest});
 
   @override
   State<UserRideRequestBottomSheet> createState() =>
@@ -43,6 +44,8 @@ class _UserRideRequestBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> rideRequest = widget.rideRequest;
+    AppLogger.d(rideRequest);
     return DraggableScrollableSheet(
       controller: sheetController,
       initialChildSize: rideStatus == RideStatus.accepted ? 0.75 : 0.65,
@@ -125,7 +128,7 @@ class _UserRideRequestBottomSheetState
                           ),
                           AppWidgets.widthBox(AppSizes.padding10),
                           Text(
-                            "Rahul Charles",
+                            '${rideRequest['user']['fullname']['firstname']} ${rideRequest['user']['fullname']['lastname']}',
                             style: TextStyle(
                               fontSize: AppSizes.fontMedium,
                               fontWeight: FontWeight.w700,
@@ -151,11 +154,13 @@ class _UserRideRequestBottomSheetState
                     children: [
                       Image.asset(AppAssets.pinIcon, height: 30),
                       AppWidgets.widthBox(AppSizes.padding10),
-                      Text(
-                        'Current Location',
-                        style: TextStyle(
-                          fontSize: AppSizes.fontMedium,
-                          color: AppColors.black,
+                      Expanded(
+                        child: Text(
+                          rideRequest['pickup'],
+                          style: TextStyle(
+                            fontSize: AppSizes.fontMedium,
+                            color: AppColors.black,
+                          ),
                         ),
                       ),
                     ],
@@ -168,11 +173,13 @@ class _UserRideRequestBottomSheetState
                     children: [
                       Icon(Icons.location_on, color: AppColors.black, size: 30),
                       AppWidgets.widthBox(AppSizes.padding10),
-                      Text(
-                        'Destination Location',
-                        style: TextStyle(
-                          fontSize: AppSizes.fontMedium,
-                          color: AppColors.black,
+                      Expanded(
+                        child: Text(
+                          rideRequest['destination'],
+                          style: TextStyle(
+                            fontSize: AppSizes.fontMedium,
+                            color: AppColors.black,
+                          ),
                         ),
                       ),
                     ],
@@ -186,7 +193,7 @@ class _UserRideRequestBottomSheetState
                       Icon(Icons.credit_card_sharp, color: AppColors.black),
                       AppWidgets.widthBox(AppSizes.padding10),
                       Text(
-                        '₹ 101',
+                        '₹${rideRequest['fare']}',
                         style: TextStyle(
                           fontSize: AppSizes.fontMedium,
                           color: AppColors.black,
