@@ -36,8 +36,11 @@ function initializeSocket(server) {
             await captainModel.findByIdAndUpdate(userId, { location: { ltd: location.ltd, lng: location.lng } });
         });
 
+        // socket.on('disconnect', () => {
+        //     console.log(`Socket disconnected: ${socket.id}`, messageObject);
+        // });
         socket.on('disconnect', () => {
-            console.log(`Socket disconnected: ${socket.id}`, messageObject);
+            console.log(`Socket disconnected: ${socket.id}`);
         });
 
         // You can add more event listeners here as needed

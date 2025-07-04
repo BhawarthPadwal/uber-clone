@@ -13,17 +13,29 @@ module.exports.createRide = async (req, res) => {
     const { pickup, destination, vehicleType } = req.body;
 
     try {
+        console.log("📦 Request Body:", { pickup, destination, vehicleType });
+
         const ride = await rideService.createRide({ user: req.user._id, pickup, destination, vehicleType });
         
+        console.log("✅ Ride Created:", ride._id);
+
         res.status(201).json(ride);
 
         const pickupCoordinates = await mapService.getAddressCoordinates(pickup);
 
-        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
+        console.log("📍 Pickup Coordinates:", pickupCoordinates);
 
-        ride.otp = "";
+        const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 10);
+
+        console.log("Captain: ", captainsInRadius);
+
+        console.log("🔍 Captains Found:", captainsInRadius.length);
+
+        // ride.otp = "";
 
         const rideWithUser = await rideModel.findById(ride._id).populate('user');
+
+        console.log(rideWithUser);
 
         captainsInRadius.map(captain => {
 
@@ -34,6 +46,18 @@ module.exports.createRide = async (req, res) => {
                 data: rideWithUser
             });
         });
+
+        // captainsInRadius.map((captain) => {
+        //     if (!captain.socketId) {
+        //         console.log(`⚠️ Captain ${captain.name} has no socketId`);
+        //     } else {
+        //         console.log(`📤 Emitting 'new-ride' to: ${captain.socketId}`);
+        //         sendMessageToSocketId(captain.socketId, {
+        //             event: "new-ride",
+        //             data: rideWithUser,
+        //         });
+        //     }
+        // });
 
     } catch (error) {
         console.error('Error creating ride:', error);
@@ -63,7 +87,7 @@ module.exports.confirmRide = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const { rideId } = req.body;
+    const { rideId } = req.query;
     try {
         const ride = await rideService.confirmRide(rideId, req.captain);
 

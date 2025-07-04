@@ -64,13 +64,13 @@ module.exports.getSuggestions = async (input) => {
     }
 }
 
-module.exports.getCaptainsInTheRadius = async (lat, lng, radius) => {
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
     const captains = await captainModel.find({
         location: {
             $geoWithin: {
-                $centerSphere: [[lng, lat], radius / 6378.1] // radius in kilometers
+                $centerSphere: [[ltd, lng], radius / 6378.1] // radius in kilometers
             }
         }
-    }, 'name vehicleType location'); // Only return necessary fields    
+    }, 'name vehicleType location socketId'); // Only return necessary fields    
     return captains;
 }

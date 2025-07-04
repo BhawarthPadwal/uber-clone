@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_uber_clone_app/services/socket_service.dart';
+import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../utils/constants/app_assets.dart';
@@ -18,6 +20,30 @@ class RideCreatedWidget extends StatefulWidget { // Data should be fetch from ap
 }
 
 class _RideCreatedWidgetState extends State<RideCreatedWidget> {
+
+  late SocketService socketService;
+
+  void listenToRideStarted() {
+    socketService.socket.on('ride-started', (data) {
+      AppLogger.i('Ride Started: $data');
+      // Handle ride started event
+    });
+  }
+    void listenToRideEnded() {
+    socketService.socket.on('ride-ended', (data) {
+      AppLogger.i('Ride Ended: $data');
+      // Handle ride started event
+    });
+  }
+
+  @override
+  void initState() {
+    socketService = SocketService();
+    super.initState();
+    listenToRideStarted();
+    listenToRideEnded();
+  }
+
   @override
   Widget build(BuildContext context) {
     final rideData = widget.rideData;
