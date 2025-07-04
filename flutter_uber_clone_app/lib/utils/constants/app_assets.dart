@@ -18,4 +18,5 @@ class AppAssets {
 
   // Animations
   static const searchDriverAnim = '$_anim/search_driver_anim.json';
+  static const driverFoundAnim = '$_anim/driver_anim.json';
 }

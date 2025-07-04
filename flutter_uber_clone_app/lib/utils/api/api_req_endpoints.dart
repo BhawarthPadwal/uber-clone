@@ -49,6 +49,10 @@ class ApiReqEndpoints {
     return '$BASE_URL$_ridesPath/create';
   }
 
+  static String cancelRide(String rideId) {
+    return '$BASE_URL$_ridesPath/cancel?rideId=$rideId';
+  }
+
  /// Captain side apis
   static String confirmRide(String rideId) {
     return '$BASE_URL$_ridesPath/confirm?rideId=$rideId';

@@ -26,6 +26,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<RideCreatedEvent>(rideCreatedEvent);
     on<GetUserProfileEvent>(getUserProfileEvent);
     on<OpenBottomSheetOnCaptainConfirmationEvent>(openBottomSheetOnCaptainConfirmationEvent);
+    on<CancelRideEvent>(cancelRideEvent);
+    on<ClearSuggestionsEvent>(clearSuggestionsEvent);
+    on<UpdateCurrentStateToRideStartedEvent>(updateCurrentStateToRideStartedEvent);
+    on<UpdateCurrentStateToRideEndedEvent>(updateCurrentStateToRideEndedEvent);
   }
 
   FutureOr<void> getMapSuggestionsEvent(
@@ -178,5 +182,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> openBottomSheetOnCaptainConfirmationEvent(OpenBottomSheetOnCaptainConfirmationEvent event, Emitter<HomeState> emit) {
     emit(OpenBottomSheetOnCaptainConfirmationState(event.data));
+  }
+
+  FutureOr<void> cancelRideEvent(CancelRideEvent event, Emitter<HomeState> emit) {
+  }
+
+
+  FutureOr<void> clearSuggestionsEvent(ClearSuggestionsEvent event, Emitter<HomeState> emit) {
+    emit(MapSuggestionsLoadedState([], []));
+  }
+
+  FutureOr<void> updateCurrentStateToRideStartedEvent(UpdateCurrentStateToRideStartedEvent event, Emitter<HomeState> emit) {
+    emit(UpdateCurrentStateToRideStartedState());
+  }
+
+  FutureOr<void> updateCurrentStateToRideEndedEvent(UpdateCurrentStateToRideEndedEvent event, Emitter<HomeState> emit) {
+    emit(UpdateCurrentStateToRideEndedState());
   }
 }

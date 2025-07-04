@@ -36,7 +36,6 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
     socketService.socket.on('ride-confirmed', (data) {
       AppLogger.i("Ride Confirmed $data");
       BlocProvider.of<HomeBloc>(context).add(OpenBottomSheetOnCaptainConfirmationEvent(data));
-      //\\captainBloc.add(OpenBottomSheetOnUserRideReqEvent(data));
     });
   }
 
@@ -45,11 +44,6 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
     super.initState();
     socketService = SocketService();
     listenCaptainConfirmation();
-    //captainBloc.add(GetUserProfileEvent());
-    /*Future.delayed(const Duration(minutes: 5), () {
-      // BlocProvider.of<HomeBloc>(context).add(RideCreatedEvent());
-    });*/
-
   }
 
   @override
@@ -61,6 +55,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
         if (state is OpenBottomSheetOnCaptainConfirmationState) {
           Navigator.of(context).pop();
           showModalBottomSheet(
+            isDismissible: false,
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.white,
@@ -198,7 +193,14 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        final homeState = context.read<HomeBloc>().state;
+                        if (homeState is RideCreatedState) {
+                          final rideId = homeState.rideData['rideId'];
+                          BlocProvider.of<HomeBloc>(context).add(CancelRideEvent(rideId));
+                        } else {
+                          AppLogger.w('Ride ID not available for cancellation');
+                        }
+                        Navigator.of(context).pop(); // Optional: close bottom sheet
                       },
                       child: Container(
                         height: 60,

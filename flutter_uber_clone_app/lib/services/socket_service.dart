@@ -1,3 +1,4 @@
+import 'package:flutter_uber_clone_app/utils/api/api_req_endpoints.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../utils/logger/app_logger.dart';
@@ -13,7 +14,7 @@ class SocketService {
   void connect({required String userId, required String userType}) {
     AppLogger.i("🚀 Attempting to connect to socket...");
 
-    socket = IO.io('http://192.168.0.109:4000', {
+    socket = IO.io(ApiReqEndpoints.BASE_URL, {
       // change if on emulator
       'transports': ['websocket'],
       'autoConnect': false,

@@ -51,3 +51,14 @@ final class RideCreatedEvent extends HomeEvent {
 }
 
 final class GetUserProfileEvent extends HomeEvent {}
+
+final class CancelRideEvent extends HomeEvent {
+  final String rideId;
+  CancelRideEvent(this.rideId);
+}
+
+final class ClearSuggestionsEvent extends HomeEvent {}
+
+final class UpdateCurrentStateToRideStartedEvent extends HomeEvent {}
+
+final class UpdateCurrentStateToRideEndedEvent extends HomeEvent {}
