@@ -30,6 +30,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   CaptainBloc captainBloc = CaptainBloc();
   final LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
   late SocketService socketService;
+  Map<String, dynamic>? captainProfile;
 
   @override
   void dispose() {
@@ -117,6 +118,9 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
       listener: (context, state) {
         if (state is FetchCaptainProfileState) {
           AppLogger.i("👨‍✈️ Captain profile fetched");
+          setState(() {
+            captainProfile = state.profile;
+          });
           initSocket(state.profile['_id'], 'captain');
           startLocationUpdates(state.profile['_id']);
           listenUserRequest();
@@ -227,13 +231,22 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               // Image.asset('assets/images/profile.jpg', width: 40, height: 40)),
                               AppWidgets.widthBox(AppSizes.padding10),
                               if (state is FetchCaptainProfileState)
-                                Text(
-                                  "${state.profile['fullname']['firstname'].toString().toUpperCase()} ${state.profile['fullname']['lastname'].toString().toUpperCase()}",
+                                /*Text(
+                                  "${captainProfile?['fullname']['firstname'].toString().toUpperCase()} ${captainProfile?['fullname']['lastname'].toString().toUpperCase()}",
                                   style: TextStyle(
                                     fontSize: AppSizes.fontMedium,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                ),
+                                ),*/
+                                captainProfile != null
+                                    ? Text(
+                                  "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} ${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
+                                  style: TextStyle(
+                                    fontSize: AppSizes.fontMedium,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                                    : SizedBox.shrink(), // Or a placeholder
                               Spacer(),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

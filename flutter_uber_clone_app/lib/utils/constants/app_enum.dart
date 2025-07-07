@@ -1,1 +1,1 @@
-enum RideStatus { pending, accepted, confirmed }
+enum RideStatus { pending, accepted, confirmed , payment_pending, paid}

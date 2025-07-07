@@ -233,16 +233,19 @@ class RideCreatedWidget extends StatefulWidget {
 
 class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   late SocketService socketService;
+  String currentStatus = 'Waiting for Confirmation';
 
   void listenToRideStarted() {
     socketService.socket.on('ride-started', (data) {
       AppLogger.i('Ride Started: $data');
+      BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideStartedEvent());
     });
   }
 
   void listenToRideEnded() {
     socketService.socket.on('ride-ended', (data) {
       AppLogger.i('Ride Ended: $data');
+      BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideEndedEvent());
     });
   }
 
@@ -261,7 +264,21 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
     return BlocConsumer<HomeBloc, HomeState>(
       listenWhen: (previous, current) => current is HomeActionableState,
       buildWhen: (previous, current) => current is! HomeActionableState,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is MakePaymentSuccessState) {
+          AppLogger.i('✅ Payment confirmed, closing sheet...');
+          Navigator.pop(context);
+        }
+        if (state is UpdateCurrentStateToRideStartedState) {
+          setState(() {
+            currentStatus = 'Ride Started';
+          });
+        } else if (state is UpdateCurrentStateToRideEndedState) {
+          setState(() {
+            currentStatus = 'Make Payment';
+          });
+        }
+      },
       builder: (context, state) {
         return DraggableScrollableSheet(
           initialChildSize: 0.85,
@@ -375,20 +392,24 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                   const SizedBox(height: 30),
 
                   ElevatedButton(
-                    onPressed: () {
-                      // TODO: Payment Action
-                    },
+                    onPressed: currentStatus == 'Make Payment' ? () {
+                      BlocProvider.of<HomeBloc>(context).add(MakePaymentEvent(rideData['_id']));
+                    } : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.lightGreen,
+                      backgroundColor: currentStatus == 'Make Payment' ? AppColors.lightGreen : AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSizes.padding10),
+                        side: BorderSide(
+                          color: AppColors.lightGreen,
+                          width: 2,
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      'Make Payment',
+                    child: Text(
+                      currentStatus,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: currentStatus == 'Make Payment' ? AppColors.white : AppColors.lightGreen,
                         fontWeight: FontWeight.bold,
                         fontSize: AppSizes.fontMedium,
                       ),

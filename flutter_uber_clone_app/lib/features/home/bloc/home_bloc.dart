@@ -30,6 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ClearSuggestionsEvent>(clearSuggestionsEvent);
     on<UpdateCurrentStateToRideStartedEvent>(updateCurrentStateToRideStartedEvent);
     on<UpdateCurrentStateToRideEndedEvent>(updateCurrentStateToRideEndedEvent);
+    on<MakePaymentEvent>(makePaymentEvent);
   }
 
   FutureOr<void> getMapSuggestionsEvent(
@@ -199,4 +200,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> updateCurrentStateToRideEndedEvent(UpdateCurrentStateToRideEndedEvent event, Emitter<HomeState> emit) {
     emit(UpdateCurrentStateToRideEndedState());
   }
+
+  FutureOr<void> makePaymentEvent(MakePaymentEvent event, Emitter<HomeState> emit) async {
+    emit(MakePaymentLoadingState());
+    try {
+      final result = await ApiManager.getWithHeader(ApiReqEndpoints.makePayment(event.rideId));
+      AppLogger.d(result);
+      final Map<String, dynamic> payment = result['data'];
+      AppLogger.d(payment);
+      if (result['status'] == 200) {
+        emit(MakePaymentSuccessState());
+      } else {
+        emit(MakePaymentErrorState(result['data']['message']));
+      }
+    } catch (e) {
+      AppLogger.e(e);
+      emit(MakePaymentErrorState(e.toString()));
+    }
+  }
 }
+
+

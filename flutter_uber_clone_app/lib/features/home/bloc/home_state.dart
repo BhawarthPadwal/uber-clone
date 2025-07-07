@@ -76,6 +76,15 @@ final class OpenBottomSheetOnCaptainConfirmationState extends HomeActionableStat
   OpenBottomSheetOnCaptainConfirmationState(this.data);
 }
 
-final class UpdateCurrentStateToRideStartedState extends HomeState {}
+final class UpdateCurrentStateToRideStartedState extends HomeActionableState {}
 
-final class UpdateCurrentStateToRideEndedState extends HomeState {}
+final class UpdateCurrentStateToRideEndedState extends HomeActionableState {}
+
+final class MakePaymentLoadingState extends HomeState {}
+
+final class MakePaymentSuccessState extends HomeActionableState {}
+
+final class MakePaymentErrorState extends HomeState {
+  final String error;
+  MakePaymentErrorState(this.error);
+}

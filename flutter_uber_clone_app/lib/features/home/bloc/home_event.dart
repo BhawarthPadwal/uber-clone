@@ -62,3 +62,8 @@ final class ClearSuggestionsEvent extends HomeEvent {}
 final class UpdateCurrentStateToRideStartedEvent extends HomeEvent {}
 
 final class UpdateCurrentStateToRideEndedEvent extends HomeEvent {}
+
+final class MakePaymentEvent extends HomeEvent {
+  final String rideId;
+  MakePaymentEvent(this.rideId);
+}
