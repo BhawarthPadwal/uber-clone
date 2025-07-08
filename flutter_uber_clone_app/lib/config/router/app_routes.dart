@@ -5,6 +5,7 @@ class AppRoutes {
   static const String userSignupScreen = '/userSignup';
   static const String captainSignupScreen = '/captainSignup';
   static const String captainLoginScreen = '/captainLogin';
+  // static const String rideCreatedScreen = '/rideCreated';
 
   static const String homeScreen = '/home';
 

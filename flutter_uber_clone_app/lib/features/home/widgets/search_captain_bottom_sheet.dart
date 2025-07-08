@@ -56,6 +56,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
           Navigator.of(context).pop();
           showModalBottomSheet(
             isDismissible: false,
+            enableDrag: false,
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.white,

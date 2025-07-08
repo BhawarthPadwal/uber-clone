@@ -69,6 +69,10 @@ class ApiReqEndpoints {
   static String makePayment(String rideId) {
     return '$BASE_URL$_ridesPath/make-payment?rideId=$rideId';
   }
+
+  static String getRoutes(String origin, String destination) {
+    return '$BASE_URL$_mapsPath/get-routes?origin=$origin&destination=$destination';
+  }
 }
 
 

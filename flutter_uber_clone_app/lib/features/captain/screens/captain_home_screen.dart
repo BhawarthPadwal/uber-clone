@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_uber_clone_app/config/router/app_routes.dart';
 import 'package:flutter_uber_clone_app/features/captain/bloc/captain_bloc.dart';
 import 'package:flutter_uber_clone_app/features/captain/widgets/user_ride_request_bottom_sheet.dart';
+import 'package:flutter_uber_clone_app/services/location_service.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../services/socket_service.dart';
@@ -35,6 +35,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
   @override
   void dispose() {
     captainBloc.close();
+    LocationService().stopLocationUpdates();
     super.dispose();
   }
 
@@ -43,10 +44,37 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
   }
 
+  /*void getLocation() {
+    // One-time fetch
+    LocationService().getCurrentLocation().then((pos) {
+      if (pos != null) {
+        setState(() {
+          _currentPosition = pos;
+          _markers.add(
+            Marker(
+              markerId: const MarkerId("currentLocation"),
+              position: pos,
+              infoWindow: const InfoWindow(title: "You are here"),
+            ),
+          );
+        });
+      }
+    });
+    // Real-time updates with marker handling
+    LocationService().startLocationUpdates(
+      onLocationChanged: (LatLng pos) {
+        setState(() {
+          _currentPosition = pos;
+        });
+      },
+      markerSet: _markers,
+    );
+  }*/
+
   @override
   void initState() {
     super.initState();
-    // _getCurrentLocation();
+    //getLocation();
     socketService = SocketService();
     captainBloc.add(GetCaptainProfileEvent());
   }
@@ -72,42 +100,6 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
     });
     AppLogger.i("📍 Started sending location updates every 10 seconds.");
   }
-
-
-  /*Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled, return early
-      return;
-    }
-    // Check permission
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
-    // Get current position
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-      _markers.add(
-        Marker(
-          markerId: MarkerId("currentLocation"),
-          position: _currentPosition,
-          infoWindow: InfoWindow(title: "You are here"),
-        ),
-      );
-    });
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +138,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                 SizedBox.expand(
                   child: GoogleMap(
                     mapType: MapType.normal,
-                    myLocationEnabled: true,
-                    // blue dot
+                    myLocationEnabled: true, // blue dot
                     myLocationButtonEnabled: true,
                     markers: _markers,
                     initialCameraPosition: CameraPosition(

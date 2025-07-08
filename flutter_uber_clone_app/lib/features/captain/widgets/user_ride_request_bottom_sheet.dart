@@ -487,7 +487,7 @@ class _UserRideRequestBottomSheetState
                 paymentStatus = castedData;
               });
 
-              AppLogger.i('✅ Payment confirmed, closing sheet...');
+              AppLogger.i('Payment confirmed, closing sheet...');
               Future.delayed(const Duration(milliseconds: 500), () {
                 if (mounted) {
                   Navigator.pop(context);
@@ -496,7 +496,7 @@ class _UserRideRequestBottomSheetState
             }
           }
         } catch (e) {
-          AppLogger.e("❌ Error parsing payment-confirmed data: $e");
+          AppLogger.e("Error parsing payment-confirmed data: $e");
         }
       }
     });
