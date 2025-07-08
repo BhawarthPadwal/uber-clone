@@ -122,6 +122,8 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.white,
+            enableDrag: false,
+            isDismissible: false,
             builder:
                 (context) => BlocProvider.value(
                   value: captainBloc,
@@ -221,14 +223,14 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               ),
                               // Image.asset('assets/images/profile.jpg', width: 40, height: 40)),
                               AppWidgets.widthBox(AppSizes.padding10),
-                              if (state is FetchCaptainProfileState)
-                                /*Text(
+                              /*if (state is FetchCaptainProfileState)
+                                *//*Text(
                                   "${captainProfile?['fullname']['firstname'].toString().toUpperCase()} ${captainProfile?['fullname']['lastname'].toString().toUpperCase()}",
                                   style: TextStyle(
                                     fontSize: AppSizes.fontMedium,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                ),*/
+                                ),*//*
                                 captainProfile != null
                                     ? Text(
                                   "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} ${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
@@ -237,7 +239,28 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 )
-                                    : SizedBox.shrink(), // Or a placeholder
+                                    : SizedBox.shrink(),*/
+                              if (captainProfile != null)
+                                Text(
+                                  "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} "
+                                      "${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
+                                  style: TextStyle(
+                                    fontSize: AppSizes.fontMedium,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                              else
+                                SizedBox(
+                                  height: 20,
+                                  child: Text(
+                                    "Loading...",
+                                    style: TextStyle(
+                                      fontSize: AppSizes.fontSmall,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),// Or a placeholder
                               Spacer(),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -43,8 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
 
   late SocketService socketService;
-  late final String pickup;
-  late final String destination;
+  late String pickup;
+  late String destination;
 
   void initSocket(String userId, String userType) {
     socketService.connect(userId: userId, userType: userType);
