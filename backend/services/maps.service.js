@@ -43,6 +43,34 @@ module.exports.getDistanceAndTime = async (origin, destination) => {
 
 }
 
+module.exports.getRoutes = async (origin, destination) => {
+    if (!origin || !destination) {
+        throw new Error('Origin and destination are required');
+    }
+
+    const axios = require('axios');
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&key=${apiKey}`;
+
+    try {
+        const response = await axios.get(url);
+
+        if (response.data.status === 'OK') {
+            const route = response.data.routes[0];
+            return {
+                polyline: route.overview_polyline.points,
+                bounds: route.bounds,
+                legs: route.legs,
+            };
+        } else {
+            throw new Error(`Directions API error: ${response.data.status}`);
+        }
+    } catch (error) {
+        console.error('Error fetching polyline route:', error.message);
+        throw new Error('Failed to fetch polyline route');
+    }
+};
+
 module.exports.getSuggestions = async (input) => {
     if (!input) {
         throw new Error('Input is required');

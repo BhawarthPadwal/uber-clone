@@ -12,6 +12,12 @@ router.post('/create',
     rideController.createRide
 );
 
+router.get('/cancel',
+    authMiddleware.authUser,
+    query('rideId').isMongoId().withMessage('Invalid ride ID'),
+    rideController.cancelRide
+)
+
 router.get('/fare', 
     authMiddleware.authUser, // Ensure the user is authenticated
     query('pickup').isString().isLength({min: 3}).withMessage('Invalid pickup location'),
@@ -36,6 +42,12 @@ router.get('/end-ride',
     authMiddleware.authCaptain, // Ensure the user is authenticated
     query('rideId').isMongoId().withMessage('Invalid ride ID'),
     rideController.endRide
+);
+
+router.get('/make-payment',
+    authMiddleware.authUser, // Only users can make payment
+    query('rideId').isMongoId().withMessage('Invalid ride ID'),
+    rideController.makePayment
 );
 
 module.exports = router;

@@ -75,6 +75,25 @@ module.exports.createRide = async ({user, pickup, destination, vehicleType }) =>
     return ride;
 } 
 
+module.exports.cancelRide = async (rideId, userId) => {
+    const ride = await rideModel.findOne({ _id: rideId, user: userId });
+
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+
+    if (ride.status !== 'pending') {
+        throw new Error('Ride cannot be cancelled once accepted or started');
+    }
+
+    // await rideModel.findOneAndUpdate({_id: rideId}, {status: 'ongoing'})
+
+    ride.status = 'cancelled';
+    await ride.save();
+
+    return ride;
+}
+
 module.exports.confirmRide = async (rideId, captain) => {
 
     if (!rideId) {
@@ -198,4 +217,45 @@ module.exports.endRide = async (rideId, captain) => {
 
     return ride.save();
 
+}
+
+module.exports.makePayment = async (rideId, user) => {
+
+    if (!rideId) {
+        throw new Error('Ride ID is required');
+    }
+
+     const ride = await rideModel.findOne({_id: rideId,user: user._id}).populate('user').populate('captain').select('+otp');
+
+    //const ride = await rideModel.findById(rideId).populate('user').populate('captain').select('+otp') ;
+
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+
+    if (ride.status !== 'completed') {
+        throw new Error('Ride not completed');
+    }
+
+    // if (ride.status !== 'in-progress') {
+    //     throw new Error('Ride is not in progress');
+    // }
+
+    await rideModel.findOneAndUpdate({_id: rideId}, {status: 'paid'})
+
+    //await rideModel.findByIdAndUpdate(rideId, { status: 'completed' });
+
+    // Optionally, you can calculate the final fare based on actual distance and time
+    // For now, we will just return the ride as is
+
+    // sendMessageToSocketId(ride.captain.socketId, {
+    //     event: 'payment-confirmed',
+    //     data: {
+    //         rideId: ride._id,
+    //         user,
+    //         amount: ride.fare,
+    //         status: 'paid',
+    //     }
+    // });
+    return ride.save();
 }

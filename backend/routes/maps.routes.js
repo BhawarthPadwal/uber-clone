@@ -18,4 +18,9 @@ router.get('/get-suggestions',
     query('input').isString().isLength({min: 3}),
     authMiddleware.authUser, mapsController.getSuggestions);
 
+router.get('/get-routes',
+    query('origin').isString().isLength({min: 3}),
+    query('destination').isString().isLength({min: 3}),
+    mapsController.getRoutes);
+
 module.exports = router;

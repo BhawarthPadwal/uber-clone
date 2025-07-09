@@ -40,7 +40,7 @@ module.exports.getDistanceAndTime = async (req, res) => {
     } catch (error) {
         console.error('Error fetching distance and time:', error);
         return res.status(500).json({ message: 'Failed to fetch distance and time' });
-    } 
+    }
 }
 
 module.exports.getSuggestions = async (req, res) => {
@@ -61,5 +61,25 @@ module.exports.getSuggestions = async (req, res) => {
     } catch (error) {
         console.error('Error fetching suggestions:', error);
         return res.status(500).json({ message: 'Failed to fetch suggestions' });
-    }   
+    }
 }
+
+module.exports.getRoutes = async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { origin, destination } = req.query;
+
+    try {
+        const result = await mapsService.getRoutes(origin, destination);
+        res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to fetch route',
+        });
+    }
+};

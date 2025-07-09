@@ -65,6 +65,28 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
+module.exports.cancelRide = async (req, res) => {
+    const err = validationResult(req);
+    if (!err.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { rideId } = req.query;
+    const userId = req.user._id;
+
+    try {
+        const cancelledRide = await rideService.cancelRide(rideId, userId);
+        
+        res.status(200).json({
+            message: 'Ride cancelled successfully',
+            data: cancelledRide,
+        });
+
+    } catch (error) {
+        console.error('Error cancelling ride:', error.message);
+        res.status(400).json({ error: error.message });
+    }
+}
+
 module.exports.getFare = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -146,3 +168,41 @@ module.exports.endRide = async (req, res) => {
         return res.status(500).json({ message: 'Failed to end ride' });
     }
 }
+
+module.exports.makePayment = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { rideId } = req.query;
+
+    try {
+        const ride = await rideService.makePayment(rideId, req.user);
+        sendMessageToSocketId(ride.captain.socketId, {
+            event: 'payment-confirmed',
+            data: {
+                rideId: ride._id,
+                user: req.user,
+                amount: ride.fare,
+                status: 'paid',
+            }
+        });
+
+        console.log("📤 Sending to captain socket:", ride.captain.socketId, {
+            event: 'payment-confirmed',
+            data: {
+                rideId: ride._id,
+                user: req.user,
+                amount: ride.fare,
+                status: 'paid',
+            }
+        });
+
+        return res.status(200).json(ride);
+    } catch (error) {
+        console.error('Error ending ride:', error);
+        return res.status(500).json({ message: 'Failed to end ride' });
+    }
+
+}
+
