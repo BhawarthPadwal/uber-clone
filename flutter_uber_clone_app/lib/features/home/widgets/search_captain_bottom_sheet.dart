@@ -30,21 +30,43 @@ class SearchCaptainBottomSheet extends StatefulWidget {
 }
 
 class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
-  late SocketService socketService;
+  final socketService = SocketService();
+  bool _isMounted = true; // ✅ Track mounted status
 
-  void listenCaptainConfirmation() {
+  /*void listenCaptainConfirmation() {
     socketService.socket.on('ride-confirmed', (data) {
       AppLogger.i("Ride Confirmed $data");
-      BlocProvider.of<HomeBloc>(context).add(OpenBottomSheetOnCaptainConfirmationEvent(data));
+      BlocProvider.of<HomeBloc>(
+        context,
+      ).add(OpenBottomSheetOnCaptainConfirmationEvent(data));
+    });
+  }*/
+  void listenCaptainConfirmation() {
+    socketService.socket.on('ride-confirmed', (data) {
+      if (!_isMounted || !mounted) return; // ✅ Prevent context access if unmounted
+
+      AppLogger.i("Ride Confirmed $data");
+      BlocProvider.of<HomeBloc>(context).add(
+        OpenBottomSheetOnCaptainConfirmationEvent(data),
+      );
     });
   }
+
 
   @override
   void initState() {
     super.initState();
-    socketService = SocketService();
+    //socketService = SocketService();
     listenCaptainConfirmation();
   }
+
+  @override
+  void dispose() {
+    _isMounted = false; // ✅ mark as unmounted
+    socketService.socket.off('ride-confirmed'); // ✅ Remove listener
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +85,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
             builder:
                 (context) => BlocProvider.value(
                   value: context.read<HomeBloc>(),
-                  child: RideCreatedWidget(
-                   rideData: state.data,
-                  ),
+                  child: RideCreatedWidget(rideData: state.data),
                 ),
           );
         }
@@ -197,11 +217,15 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                         final homeState = context.read<HomeBloc>().state;
                         if (homeState is RideCreatedState) {
                           final rideId = homeState.rideData['rideId'];
-                          BlocProvider.of<HomeBloc>(context).add(CancelRideEvent(rideId));
+                          BlocProvider.of<HomeBloc>(
+                            context,
+                          ).add(CancelRideEvent(rideId));
                         } else {
                           AppLogger.w('Ride ID not available for cancellation');
                         }
-                        Navigator.of(context).pop(); // Optional: close bottom sheet
+                        Navigator.of(
+                          context,
+                        ).pop(); // Optional: close bottom sheet
                       },
                       child: Container(
                         height: 60,

@@ -59,4 +59,3 @@ final class EndRideResponseState extends CaptainActionableState {
   final String message;
   EndRideResponseState(this.message);
 }
-

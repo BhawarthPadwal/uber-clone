@@ -25,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final DraggableScrollableController sheetController =
       DraggableScrollableController();
   final TextEditingController pickupController = TextEditingController();
@@ -33,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FocusNode pickupFocusNode = FocusNode();
   final FocusNode destinationFocusNode = FocusNode();
   final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
+      Completer<GoogleMapController>();
 
   HomeBloc homeBloc = HomeBloc();
   Timer? _debounce;
@@ -81,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    //getLocation();
+    getLocation();
     socketService = SocketService();
     homeBloc.add(GetUserProfileEvent());
   }
@@ -184,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 20,
                     top: 20,
                     child: Text(
-                      'Uber',
+                      'RideSeva',
                       style: TextStyle(
                         fontSize: AppSizes.fontXL,
                         color: AppColors.black,

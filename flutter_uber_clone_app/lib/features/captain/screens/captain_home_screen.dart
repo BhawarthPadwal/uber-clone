@@ -28,7 +28,10 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
       Completer<GoogleMapController>();
   final Set<Marker> _markers = {};
   CaptainBloc captainBloc = CaptainBloc();
-  final LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
+  final LatLng _currentPosition = const LatLng(
+    19.0338457,
+    73.0195871,
+  ); // default
   late SocketService socketService;
   Map<String, dynamic>? captainProfile;
 
@@ -93,7 +96,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
         'location': {
           'ltd': _currentPosition.latitude,
           'lng': _currentPosition.longitude,
-        }
+        },
       };
       AppLogger.i('Data to be emit: $data');
       socketService.emit('update-location-captain', data);
@@ -127,7 +130,9 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
             builder:
                 (context) => BlocProvider.value(
                   value: captainBloc,
-                  child: UserRideRequestBottomSheet(rideRequest: state.rideRequest),
+                  child: UserRideRequestBottomSheet(
+                    rideRequest: state.rideRequest,
+                  ),
                 ),
           );
         }
@@ -156,7 +161,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                   left: 20,
                   top: 20,
                   child: Text(
-                    'Uber',
+                    'RideSeva',
                     style: TextStyle(
                       fontSize: AppSizes.fontXL,
                       color: AppColors.black,
@@ -224,13 +229,15 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               // Image.asset('assets/images/profile.jpg', width: 40, height: 40)),
                               AppWidgets.widthBox(AppSizes.padding10),
                               /*if (state is FetchCaptainProfileState)
-                                *//*Text(
+                                */
+                              /*Text(
                                   "${captainProfile?['fullname']['firstname'].toString().toUpperCase()} ${captainProfile?['fullname']['lastname'].toString().toUpperCase()}",
                                   style: TextStyle(
                                     fontSize: AppSizes.fontMedium,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                ),*//*
+                                ),*/
+                              /*
                                 captainProfile != null
                                     ? Text(
                                   "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} ${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
@@ -243,7 +250,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               if (captainProfile != null)
                                 Text(
                                   "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} "
-                                      "${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
+                                  "${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
                                   style: TextStyle(
                                     fontSize: AppSizes.fontMedium,
                                     fontWeight: FontWeight.w700,
@@ -260,7 +267,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                                       color: Colors.grey,
                                     ),
                                   ),
-                                ),// Or a placeholder
+                                ), // Or a placeholder
                               Spacer(),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

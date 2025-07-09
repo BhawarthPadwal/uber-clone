@@ -34,7 +34,8 @@ class RideCreatedWidget extends StatefulWidget {
 }
 
 class _RideCreatedWidgetState extends State<RideCreatedWidget> {
-  late SocketService socketService;
+  final socketService = SocketService();
+  bool _isMounted = true;
   String currentStatus = 'Waiting for Confirmation';
   bool _isMapReady = false;
   late String _pickupLocation;
@@ -46,21 +47,24 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   String? polylineStringData;
   List<PointLatLng> decodedPoints = [];
 
-  /// Listens to 'ride-started' event from socket
   void listenToRideStarted() {
     socketService.socket.on('ride-started', (data) {
-      AppLogger.i('Ride Started: \$data');
+      if (!_isMounted || !mounted) return;
+
+      AppLogger.i('Ride Started: \n $data');
       BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideStartedEvent());
     });
   }
 
-  /// Listens to 'ride-ended' event from socket
   void listenToRideEnded() {
     socketService.socket.on('ride-ended', (data) {
-      AppLogger.i('Ride Ended: \$data');
+      if (!_isMounted || !mounted) return;
+
+      AppLogger.i('Ride Ended: \n $data');
       BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideEndedEvent());
     });
   }
+
 
   /// Adjusts camera to fit both pickup and destination markers
   void _moveCameraToFitBounds() async {
@@ -85,12 +89,20 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   Future<void> _convertAddressesToCoordinates() async {
     try {
       final pickupLocations = await locationFromAddress(_pickupLocation);
-      final destinationLocations = await locationFromAddress(_destinationLocation);
+      final destinationLocations = await locationFromAddress(
+        _destinationLocation,
+      );
 
       if (pickupLocations.isNotEmpty && destinationLocations.isNotEmpty) {
         setState(() {
-          _pickupLatLng = LatLng(pickupLocations.first.latitude, pickupLocations.first.longitude);
-          _destinationLatLng = LatLng(destinationLocations.first.latitude, destinationLocations.first.longitude);
+          _pickupLatLng = LatLng(
+            pickupLocations.first.latitude,
+            pickupLocations.first.longitude,
+          );
+          _destinationLatLng = LatLng(
+            destinationLocations.first.latitude,
+            destinationLocations.first.longitude,
+          );
           _isMapReady = true;
         });
       }
@@ -102,7 +114,10 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   /// Fetches route polyline from backend and decodes it
   Future<void> fetchRoutePolyline() async {
     try {
-      polylineStringData = await ApiService.getRoutes(_pickupLocation, _destinationLocation);
+      polylineStringData = await ApiService.getRoutes(
+        _pickupLocation,
+        _destinationLocation,
+      );
       AppLogger.d("Polyline String: \$polylineStringData");
 
       if (polylineStringData != null) {
@@ -124,7 +139,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   @override
   void initState() {
     super.initState();
-    socketService = SocketService();
+    // socketService = SocketService();
     listenToRideStarted();
     listenToRideEnded();
 
@@ -136,8 +151,19 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
     _convertAddressesToCoordinates();
     fetchRoutePolyline();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _moveCameraToFitBounds());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _moveCameraToFitBounds(),
+    );
   }
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    socketService.socket.off('ride-started');
+    socketService.socket.off('ride-ended');
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -168,9 +194,15 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
                 boxShadow: [
-                  BoxShadow(color: Colors.black26, blurRadius: 15, offset: Offset(0, -2)),
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 15,
+                    offset: Offset(0, -2),
+                  ),
                 ],
               ),
               child: ListView(
@@ -189,53 +221,69 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                     ),
                   ),
 
-                  lottie.Lottie.asset(AppAssets.driverFoundAnim, height: 200, width: 200),
+                  lottie.Lottie.asset(
+                    AppAssets.driverFoundAnim,
+                    height: 200,
+                    width: 200,
+                  ),
 
                   /// Map Preview
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: SizedBox(
                       height: 250,
-                      child: _isMapReady
-                          ? GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: _pickupLatLng,
-                          zoom: 14,
-                        ),
-                        onMapCreated: (controller) => _mapController.complete(controller),
-                        markers: {
-                          Marker(
-                            markerId: MarkerId("pickup"),
-                            position: _pickupLatLng,
-                            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                          ),
-                          Marker(
-                            markerId: MarkerId("destination"),
-                            position: _destinationLatLng,
-                            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                          ),
-                        },
-                        polylines: {
-                          Polyline(
-                            polylineId: PolylineId("route"),
-                            points: convertToLatLng(decodedPoints),
-                            color: Colors.blueAccent,
-                            width: 5,
-                            jointType: JointType.round,
-                            startCap: Cap.roundCap,
-                            endCap: Cap.roundCap,
-                            geodesic: true,
-                          )
-                        },
-                        myLocationEnabled: true,
-                        scrollGesturesEnabled: true,
-                        zoomGesturesEnabled: true,
-                        mapType: MapType.normal,
-                        gestureRecognizers: {
-                          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-                        },
-                      )
-                          : const Center(child: CircularProgressIndicator()),
+                      child:
+                          _isMapReady
+                              ? GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  target: _pickupLatLng,
+                                  zoom: 14,
+                                ),
+                                onMapCreated:
+                                    (controller) =>
+                                        _mapController.complete(controller),
+                                markers: {
+                                  Marker(
+                                    markerId: MarkerId("pickup"),
+                                    position: _pickupLatLng,
+                                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                                      BitmapDescriptor.hueGreen,
+                                    ),
+                                  ),
+                                  Marker(
+                                    markerId: MarkerId("destination"),
+                                    position: _destinationLatLng,
+                                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                                      BitmapDescriptor.hueRed,
+                                    ),
+                                  ),
+                                },
+                                polylines: {
+                                  Polyline(
+                                    polylineId: PolylineId("route"),
+                                    points: convertToLatLng(decodedPoints),
+                                    color: Colors.blueAccent,
+                                    width: 5,
+                                    jointType: JointType.round,
+                                    startCap: Cap.roundCap,
+                                    endCap: Cap.roundCap,
+                                    geodesic: true,
+                                  ),
+                                },
+                                myLocationButtonEnabled: true,
+                                myLocationEnabled: true,
+                                scrollGesturesEnabled: true,
+                                zoomGesturesEnabled: true,
+                                mapType: MapType.normal,
+                                gestureRecognizers: {
+                                  Factory<OneSequenceGestureRecognizer>(
+                                    () => EagerGestureRecognizer(),
+                                  ),
+                                },
+                              )
+                              : const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                     ),
                   ),
 
@@ -247,11 +295,20 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                   const SizedBox(height: 20),
 
                   /// Pickup and Destination Info
-                  HomeWidgets.buildInfoRow(AppAssets.pinIcon, rideData['pickup'] ?? ''),
+                  HomeWidgets.buildInfoRow(
+                    AppAssets.pinIcon,
+                    rideData['pickup'] ?? '',
+                  ),
                   Divider(indent: 10, endIndent: 10),
-                  HomeWidgets.buildInfoRow(Icons.location_on, rideData['destination'] ?? ''),
+                  HomeWidgets.buildInfoRow(
+                    Icons.location_on,
+                    rideData['destination'] ?? '',
+                  ),
                   Divider(indent: 10, endIndent: 10),
-                  HomeWidgets.buildInfoRow(Icons.credit_card, '₹ ${rideData['fare']}'),
+                  HomeWidgets.buildInfoRow(
+                    Icons.credit_card,
+                    '₹ ${rideData['fare']}',
+                  ),
 
                   const SizedBox(height: 40),
 
@@ -276,7 +333,11 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.grey.shade200, blurRadius: 10, spreadRadius: 2)
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
         ],
       ),
       child: Row(
@@ -289,21 +350,40 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
               children: [
                 Text(
                   '${rideData['captain']['fullname']['firstname']} ${rideData['captain']['fullname']['lastname']}',
-                  style: TextStyle(fontSize: AppSizes.fontLarge, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: AppSizes.fontLarge,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
-                  rideData['captain']['vehicle']['plate'].toString().toUpperCase(),
-                  style: TextStyle(fontSize: AppSizes.fontMedium, color: Colors.grey[700]),
+                  rideData['captain']['vehicle']['plate']
+                      .toString()
+                      .toUpperCase(),
+                  style: TextStyle(
+                    fontSize: AppSizes.fontMedium,
+                    color: Colors.grey[700],
+                  ),
                 ),
                 Text(
-                  rideData['captain']['vehicle']['vehicleType'] == 'car' ? "Hyundai i10" : 'Hero Splendor',
-                  style: TextStyle(fontSize: AppSizes.fontSmall, color: Colors.grey[600]),
+                  rideData['captain']['vehicle']['vehicleType'] == 'car'
+                      ? "Hyundai i10"
+                      : 'Hero Splendor',
+                  style: TextStyle(
+                    fontSize: AppSizes.fontSmall,
+                    color: Colors.grey[600],
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text("OTP: ${rideData['otp']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppSizes.fontMedium)),
+                Text(
+                  "OTP: ${rideData['otp']}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppSizes.fontMedium,
+                  ),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -312,14 +392,23 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   /// Builds the dynamic payment button based on currentStatus
   Widget _buildPaymentButton(Map<String, dynamic> rideData) {
     return ElevatedButton(
-      onPressed: currentStatus == 'Make Payment'
-          ? () {
-        BlocProvider.of<HomeBloc>(context).add(MakePaymentEvent(rideData['_id']));
-      }
-          : null,
+      onPressed:
+          currentStatus == 'Make Payment'
+              ? () {
+                BlocProvider.of<HomeBloc>(
+                  context,
+                ).add(MakePaymentEvent(rideData['_id']));
+              }
+              : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: currentStatus == 'Make Payment' ? AppColors.lightGreen : AppColors.white,
-        foregroundColor: currentStatus == 'Make Payment' ? AppColors.white : AppColors.lightGreen,
+        backgroundColor:
+            currentStatus == 'Make Payment'
+                ? AppColors.lightGreen
+                : AppColors.white,
+        foregroundColor:
+            currentStatus == 'Make Payment'
+                ? AppColors.white
+                : AppColors.lightGreen,
         disabledBackgroundColor: Colors.white,
         disabledForegroundColor: AppColors.lightGreen,
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -330,7 +419,10 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
       ),
       child: Text(
         currentStatus,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: AppSizes.fontMedium),
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppSizes.fontMedium,
+        ),
       ),
     );
   }

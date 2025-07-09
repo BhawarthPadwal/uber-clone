@@ -1,5 +1,4 @@
 class AppString {
-
   // General
   static const appName = 'Uber';
   static const welcome = 'Welcome to Uber';
@@ -17,5 +16,4 @@ class AppString {
   static const signInAsUser = 'Sign in as User';
   static const registerAsCaptain = 'Register as a Captain';
   static const alreadyHaveAccount = 'Already have an account?';
-
 }

@@ -24,7 +24,6 @@ class LocalStorageService {
     await _prefs.remove(_isCurrentAccess);
   }
 
-
   static Future<void> saveToken(String token) async {
     await _prefs.setString(_tokenKey, token);
   }

@@ -11,12 +11,12 @@ class AppWidgets {
   }
 
   static void showSnackbar(
-      BuildContext context, {
-        required String message,
-        Color? backgroundColor,
-        Duration duration = const Duration(seconds: 2),
-        SnackBarAction? action,
-      }) {
+    BuildContext context, {
+    required String message,
+    Color? backgroundColor,
+    Duration duration = const Duration(seconds: 2),
+    SnackBarAction? action,
+  }) {
     final bgColor = AppColors.black;
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar(); // optional

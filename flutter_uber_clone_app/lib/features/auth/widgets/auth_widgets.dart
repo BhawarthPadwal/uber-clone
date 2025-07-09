@@ -3,10 +3,9 @@ import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 
 class AuthWidgets {
-
   static Widget uberLabel() {
     return Text(
-      "Uber",
+      "RideSeva",
       style: TextStyle(
         fontSize: AppSizes.fontLarge,
         color: AppColors.black,
@@ -71,13 +70,12 @@ class AuthWidgets {
   }*/
 
   static Widget textField(
-      String hintText,
-      TextEditingController controller,
-      {
-        String? Function(String?)? validator,
-        bool isEmail = false,
-        bool isPassword = false,
-      }) {
+    String hintText,
+    TextEditingController controller, {
+    String? Function(String?)? validator,
+    bool isEmail = false,
+    bool isPassword = false,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
@@ -134,8 +132,6 @@ class AuthWidgets {
       ),
     );
   }
-
-
 
   static Widget submitButton({
     required String text,

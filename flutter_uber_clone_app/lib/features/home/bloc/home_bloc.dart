@@ -25,10 +25,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<OpenSearchCaptainBottomSheetEvent>(openSearchCaptainBottomSheetEvent);
     on<RideCreatedEvent>(rideCreatedEvent);
     on<GetUserProfileEvent>(getUserProfileEvent);
-    on<OpenBottomSheetOnCaptainConfirmationEvent>(openBottomSheetOnCaptainConfirmationEvent);
+    on<OpenBottomSheetOnCaptainConfirmationEvent>(
+      openBottomSheetOnCaptainConfirmationEvent,
+    );
     on<CancelRideEvent>(cancelRideEvent);
     on<ClearSuggestionsEvent>(clearSuggestionsEvent);
-    on<UpdateCurrentStateToRideStartedEvent>(updateCurrentStateToRideStartedEvent);
+    on<UpdateCurrentStateToRideStartedEvent>(
+      updateCurrentStateToRideStartedEvent,
+    );
     on<UpdateCurrentStateToRideEndedEvent>(updateCurrentStateToRideEndedEvent);
     on<MakePaymentEvent>(makePaymentEvent);
   }
@@ -142,14 +146,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(RideCreatedLoadingState());
     try {
-      final result = await ApiManager.postWithHeader(
-        ApiReqEndpoints.postRideCreated(),
-        {
-          "pickup": event.pickup,
-          "destination": event.destination,
-          'vehicleType': event.vehicleType,
-        },
-      );
+      final result =
+          await ApiManager.postWithHeader(ApiReqEndpoints.postRideCreated(), {
+            "pickup": event.pickup,
+            "destination": event.destination,
+            'vehicleType': event.vehicleType,
+          });
       AppLogger.d(result);
       if (result['status'] == 201) {
         emit(RideCreatedState(result['data']));
@@ -162,10 +164,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> getUserProfileEvent(GetUserProfileEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> getUserProfileEvent(
+    GetUserProfileEvent event,
+    Emitter<HomeState> emit,
+  ) async {
     emit(FetchUserProfileLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.getUserProfile());
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.getUserProfile(),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> userProfile = result['data'];
       AppLogger.d(userProfile);
@@ -181,30 +188,48 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> openBottomSheetOnCaptainConfirmationEvent(OpenBottomSheetOnCaptainConfirmationEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> openBottomSheetOnCaptainConfirmationEvent(
+    OpenBottomSheetOnCaptainConfirmationEvent event,
+    Emitter<HomeState> emit,
+  ) {
     emit(OpenBottomSheetOnCaptainConfirmationState(event.data));
   }
 
-  FutureOr<void> cancelRideEvent(CancelRideEvent event, Emitter<HomeState> emit) {
-  }
+  FutureOr<void> cancelRideEvent(
+    CancelRideEvent event,
+    Emitter<HomeState> emit,
+  ) {}
 
-
-  FutureOr<void> clearSuggestionsEvent(ClearSuggestionsEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> clearSuggestionsEvent(
+    ClearSuggestionsEvent event,
+    Emitter<HomeState> emit,
+  ) {
     emit(MapSuggestionsLoadedState([], []));
   }
 
-  FutureOr<void> updateCurrentStateToRideStartedEvent(UpdateCurrentStateToRideStartedEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> updateCurrentStateToRideStartedEvent(
+    UpdateCurrentStateToRideStartedEvent event,
+    Emitter<HomeState> emit,
+  ) {
     emit(UpdateCurrentStateToRideStartedState());
   }
 
-  FutureOr<void> updateCurrentStateToRideEndedEvent(UpdateCurrentStateToRideEndedEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> updateCurrentStateToRideEndedEvent(
+    UpdateCurrentStateToRideEndedEvent event,
+    Emitter<HomeState> emit,
+  ) {
     emit(UpdateCurrentStateToRideEndedState());
   }
 
-  FutureOr<void> makePaymentEvent(MakePaymentEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> makePaymentEvent(
+    MakePaymentEvent event,
+    Emitter<HomeState> emit,
+  ) async {
     emit(MakePaymentLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.makePayment(event.rideId));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.makePayment(event.rideId),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> payment = result['data'];
       AppLogger.d(payment);
@@ -219,5 +244,3 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 }
-
-

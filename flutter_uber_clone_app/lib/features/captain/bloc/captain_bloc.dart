@@ -19,14 +19,22 @@ class CaptainBloc extends Bloc<CaptainEvent, CaptainState> {
     on<EndRideEvent>(endRideEvent);
   }
 
-  FutureOr<void> openBottomSheetOnUserRideReqEvent(OpenBottomSheetOnUserRideReqEvent event, Emitter<CaptainState> emit) {
+  FutureOr<void> openBottomSheetOnUserRideReqEvent(
+    OpenBottomSheetOnUserRideReqEvent event,
+    Emitter<CaptainState> emit,
+  ) {
     emit(OpenBottomSheetOnUserRideReqState(event.rideRequest));
   }
 
-  FutureOr<void> getCaptainProfileEvent(GetCaptainProfileEvent event, Emitter<CaptainState> emit) async {
+  FutureOr<void> getCaptainProfileEvent(
+    GetCaptainProfileEvent event,
+    Emitter<CaptainState> emit,
+  ) async {
     emit(FetchCaptainProfileLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.getCaptainProfile());
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.getCaptainProfile(),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> captainProfile = result['data'];
       AppLogger.d(captainProfile);
@@ -42,10 +50,15 @@ class CaptainBloc extends Bloc<CaptainEvent, CaptainState> {
     }
   }
 
-  FutureOr<void> acceptRideEvent(AcceptRideEvent event, Emitter<CaptainState> emit) async {
+  FutureOr<void> acceptRideEvent(
+    AcceptRideEvent event,
+    Emitter<CaptainState> emit,
+  ) async {
     emit(AcceptRideLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.confirmRide(event.rideId));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.confirmRide(event.rideId),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> ride = result['data'];
       if (result['status'] == 200) {
@@ -62,10 +75,15 @@ class CaptainBloc extends Bloc<CaptainEvent, CaptainState> {
     }
   }
 
-  FutureOr<void> startRideEvent(StartRideEvent event, Emitter<CaptainState> emit) async {
+  FutureOr<void> startRideEvent(
+    StartRideEvent event,
+    Emitter<CaptainState> emit,
+  ) async {
     emit(StartRideLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.startRide(event.rideId, event.otp));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.startRide(event.rideId, event.otp),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> ride = result['data'];
       if (result['status'] == 200) {
@@ -83,10 +101,15 @@ class CaptainBloc extends Bloc<CaptainEvent, CaptainState> {
     }
   }
 
-  FutureOr<void> endRideEvent(EndRideEvent event, Emitter<CaptainState> emit) async {
+  FutureOr<void> endRideEvent(
+    EndRideEvent event,
+    Emitter<CaptainState> emit,
+  ) async {
     emit(EndRideLoadingState());
     try {
-      final result = await ApiManager.getWithHeader(ApiReqEndpoints.endRide(event.rideId));
+      final result = await ApiManager.getWithHeader(
+        ApiReqEndpoints.endRide(event.rideId),
+      );
       AppLogger.d(result);
       final Map<String, dynamic> ride = result['data'];
       if (result['status'] == 200) {

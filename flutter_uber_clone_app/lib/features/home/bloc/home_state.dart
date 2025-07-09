@@ -22,7 +22,12 @@ final class MapDistanceDurationListLoadedState extends HomeState {
   final String distance;
   final String duration;
   final int selectedVehicleIndex;
-  MapDistanceDurationListLoadedState(this.vehicleFare, this.distance, this.duration, this.selectedVehicleIndex);
+  MapDistanceDurationListLoadedState(
+    this.vehicleFare,
+    this.distance,
+    this.duration,
+    this.selectedVehicleIndex,
+  );
 }
 
 final class MapSuggestionsErrorState extends HomeActionableState {
@@ -71,7 +76,8 @@ final class FetchUserProfileMessageResponseState extends HomeState {
   FetchUserProfileMessageResponseState(this.message);
 }
 
-final class OpenBottomSheetOnCaptainConfirmationState extends HomeActionableState {
+final class OpenBottomSheetOnCaptainConfirmationState
+    extends HomeActionableState {
   final Map<String, dynamic> data;
   OpenBottomSheetOnCaptainConfirmationState(this.data);
 }

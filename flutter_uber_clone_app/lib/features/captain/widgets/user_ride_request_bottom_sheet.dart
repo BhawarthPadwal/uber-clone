@@ -27,11 +27,11 @@ class _UserRideRequestBottomSheetState
   final DraggableScrollableController sheetController =
       DraggableScrollableController();
 
-  *//*
+  */ /*
 
 */
 /*bool isAccepted = false;
-  bool isOtpConfirmed = false;*//*
+  bool isOtpConfirmed = false;*/ /*
 */
 /*
 
@@ -415,7 +415,7 @@ class _UserRideRequestBottomSheetState
     );
   }
 }
-*//*
+*/ /*
 
 import 'dart:async';
 
@@ -995,7 +995,7 @@ class _UserRideRequestBottomSheetState
     extends State<UserRideRequestBottomSheet> {
   final TextEditingController otpController = TextEditingController();
   final DraggableScrollableController sheetController =
-  DraggableScrollableController();
+      DraggableScrollableController();
 
   late SocketService socketService;
   late PolylinePoints polylinePoints;
@@ -1048,7 +1048,9 @@ class _UserRideRequestBottomSheetState
     _convertAddressesToCoordinates();
     fetchRoutePolyline();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _moveCameraToFitBounds());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _moveCameraToFitBounds(),
+    );
   }
 
   /// Sets up a listener to handle real-time payment confirmation events.
@@ -1088,7 +1090,10 @@ class _UserRideRequestBottomSheetState
       if (pickup.isNotEmpty && destination.isNotEmpty) {
         setState(() {
           _pickupLatLng = LatLng(pickup.first.latitude, pickup.first.longitude);
-          _destinationLatLng = LatLng(destination.first.latitude, destination.first.longitude);
+          _destinationLatLng = LatLng(
+            destination.first.latitude,
+            destination.first.longitude,
+          );
           _isMapReady = true;
         });
       }
@@ -1100,8 +1105,10 @@ class _UserRideRequestBottomSheetState
   /// Fetches the encoded polyline string from backend and decodes it.
   Future<void> fetchRoutePolyline() async {
     try {
-      polylineStringData =
-      await ApiService.getRoutes(_pickupLocation, _destinationLocation);
+      polylineStringData = await ApiService.getRoutes(
+        _pickupLocation,
+        _destinationLocation,
+      );
       AppLogger.d("Polyline String: $polylineStringData");
 
       if (polylineStringData != null) {
@@ -1154,7 +1161,6 @@ class _UserRideRequestBottomSheetState
         return 'Ride Completed!';
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -1212,7 +1218,9 @@ class _UserRideRequestBottomSheetState
                       ),
                     ),*/
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.padding20,
+                      ),
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
@@ -1230,7 +1238,9 @@ class _UserRideRequestBottomSheetState
 
                     // User Info and Distance
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.padding20,
+                      ),
                       child: Container(
                         decoration: BoxDecoration(
                           color: isAccepted ? Colors.white : Colors.amber,
@@ -1251,7 +1261,7 @@ class _UserRideRequestBottomSheetState
                               const SizedBox(width: AppSizes.padding10),
                               Text(
                                 '${rideRequest['user']['fullname']['firstname']} '
-                                    '${rideRequest['user']['fullname']['lastname']}',
+                                '${rideRequest['user']['fullname']['lastname']}',
                                 style: TextStyle(
                                   fontSize: AppSizes.fontMedium,
                                   fontWeight: FontWeight.w700,
@@ -1280,47 +1290,57 @@ class _UserRideRequestBottomSheetState
                         borderRadius: BorderRadius.circular(12),
                         child: SizedBox(
                           height: 250,
-                          child: _isMapReady
-                              ? GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: _pickupLatLng,
-                              zoom: 14,
-                            ),
-                            onMapCreated: (controller) =>
-                                _mapController.complete(controller),
-                            markers: {
-                              Marker(
-                                markerId: MarkerId("pickup"),
-                                position: _pickupLatLng,
-                                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                              ),
-                              Marker(
-                                markerId: MarkerId("destination"),
-                                position: _destinationLatLng,
-                                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                              ),
-                            },
-                            polylines: {
-                              Polyline(
-                                polylineId: PolylineId("route"),
-                                points: convertToLatLng(decodedPoints),
-                                color: Colors.blueAccent,
-                                width: 5,
-                                jointType: JointType.round,
-                                startCap: Cap.roundCap,
-                                endCap: Cap.roundCap,
-                                geodesic: true,
-                              ),
-                            },
-                            myLocationEnabled: true,
-                            mapType: MapType.normal,
-                            gestureRecognizers: {
-                              Factory<OneSequenceGestureRecognizer>(
-                                    () => EagerGestureRecognizer(),
-                              ),
-                            },
-                          )
-                              : const Center(child: CircularProgressIndicator()),
+                          child:
+                              _isMapReady
+                                  ? GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: _pickupLatLng,
+                                      zoom: 14,
+                                    ),
+                                    onMapCreated:
+                                        (controller) =>
+                                            _mapController.complete(controller),
+                                    markers: {
+                                      Marker(
+                                        markerId: MarkerId("pickup"),
+                                        position: _pickupLatLng,
+                                        icon:
+                                            BitmapDescriptor.defaultMarkerWithHue(
+                                              BitmapDescriptor.hueGreen,
+                                            ),
+                                      ),
+                                      Marker(
+                                        markerId: MarkerId("destination"),
+                                        position: _destinationLatLng,
+                                        icon:
+                                            BitmapDescriptor.defaultMarkerWithHue(
+                                              BitmapDescriptor.hueRed,
+                                            ),
+                                      ),
+                                    },
+                                    polylines: {
+                                      Polyline(
+                                        polylineId: PolylineId("route"),
+                                        points: convertToLatLng(decodedPoints),
+                                        color: Colors.blueAccent,
+                                        width: 5,
+                                        jointType: JointType.round,
+                                        startCap: Cap.roundCap,
+                                        endCap: Cap.roundCap,
+                                        geodesic: true,
+                                      ),
+                                    },
+                                    myLocationEnabled: true,
+                                    mapType: MapType.normal,
+                                    gestureRecognizers: {
+                                      Factory<OneSequenceGestureRecognizer>(
+                                        () => EagerGestureRecognizer(),
+                                      ),
+                                    },
+                                  )
+                                  : const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                         ),
                       ),
                     ),
@@ -1330,11 +1350,13 @@ class _UserRideRequestBottomSheetState
                     buildDivider(),
                     buildInfoRow(Icons.location_on, rideRequest['destination']),
                     buildDivider(),
-                    buildInfoRow(Icons.credit_card_sharp, '₹${rideRequest['fare']}'),
+                    buildInfoRow(
+                      Icons.credit_card_sharp,
+                      '₹${rideRequest['fare']}',
+                    ),
 
                     // OTP Field
-                    if (rideStatus == RideStatus.accepted)
-                      buildOtpField(),
+                    if (rideStatus == RideStatus.accepted) buildOtpField(),
 
                     // Waiting for Payment
                     if (rideStatus == RideStatus.payment_pending)
@@ -1344,8 +1366,7 @@ class _UserRideRequestBottomSheetState
                     buildPrimaryButton(),
 
                     // Cancel/Ignore Button
-                    if (!isOtpConfirmed)
-                      buildSecondaryButton(),
+                    if (!isOtpConfirmed) buildSecondaryButton(),
                   ],
                 ),
               ),
@@ -1383,7 +1404,10 @@ class _UserRideRequestBottomSheetState
 
   Widget buildOtpField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20, vertical: AppSizes.padding20),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.padding20,
+        vertical: AppSizes.padding20,
+      ),
       child: TextFormField(
         controller: otpController,
         decoration: InputDecoration(
@@ -1439,7 +1463,10 @@ class _UserRideRequestBottomSheetState
 
   Widget buildSecondaryButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20, vertical: AppSizes.padding10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.padding20,
+        vertical: AppSizes.padding10,
+      ),
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Container(
@@ -1468,7 +1495,9 @@ class _UserRideRequestBottomSheetState
     setState(() {
       switch (rideStatus) {
         case RideStatus.pending:
-          BlocProvider.of<CaptainBloc>(context).add(AcceptRideEvent(widget.rideRequest['_id']));
+          BlocProvider.of<CaptainBloc>(
+            context,
+          ).add(AcceptRideEvent(widget.rideRequest['_id']));
           rideStatus = RideStatus.accepted;
           break;
 
@@ -1478,16 +1507,19 @@ class _UserRideRequestBottomSheetState
             return;
           }
           BlocProvider.of<CaptainBloc>(context).add(
-            StartRideEvent(widget.rideRequest['_id'], otpController.text.trim()),
+            StartRideEvent(
+              widget.rideRequest['_id'],
+              otpController.text.trim(),
+            ),
           );
           otpController.clear();
           rideStatus = RideStatus.confirmed;
           break;
 
         case RideStatus.confirmed:
-          BlocProvider.of<CaptainBloc>(context).add(
-            EndRideEvent(widget.rideRequest['_id']),
-          );
+          BlocProvider.of<CaptainBloc>(
+            context,
+          ).add(EndRideEvent(widget.rideRequest['_id']));
           AppWidgets.showSnackbar(context, message: 'Ride Completed');
           rideStatus = RideStatus.payment_pending;
           break;
@@ -1505,4 +1537,3 @@ class _UserRideRequestBottomSheetState
     });
   }
 }
-

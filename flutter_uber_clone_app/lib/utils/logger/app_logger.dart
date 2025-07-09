@@ -13,8 +13,8 @@ class AppLogger {
     ),
   );
 
-  static void i(dynamic message) => _logger.i(message);       // Info
-  static void d(dynamic message) => _logger.d(message);       // Debug
-  static void w(dynamic message) => _logger.w(message);       // Warning
-  static void e(dynamic message) => _logger.e(message);       // Error
+  static void i(dynamic message) => _logger.i(message); // Info
+  static void d(dynamic message) => _logger.d(message); // Debug
+  static void w(dynamic message) => _logger.w(message); // Warning
+  static void e(dynamic message) => _logger.e(message); // Error
 }

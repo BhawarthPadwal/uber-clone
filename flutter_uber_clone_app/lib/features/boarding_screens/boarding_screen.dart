@@ -33,12 +33,15 @@ class _BoardingScreenState extends State<BoardingScreen> {
               Flexible(
                 child: Stack(
                   children: [
-                    Image.asset('assets/images/traffic_signal.jpg', fit: BoxFit.cover),
+                    Image.asset(
+                      'assets/images/traffic_signal.jpg',
+                      fit: BoxFit.cover,
+                    ),
                     Positioned(
                       left: 20,
                       top: 20,
                       child: Text(
-                        'Uber',
+                        'RideSeva',
                         style: TextStyle(
                           fontSize: AppSizes.fontXL,
                           color: AppColors.black,
@@ -54,7 +57,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 padding: const EdgeInsets.only(left: 20),
                 child: Text(
                   'Get Started with Uber',
-                  style: TextStyle(fontSize: AppSizes.fontXXL, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: AppSizes.fontXXL,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               AppWidgets.heightBox(AppSizes.padding30),
@@ -80,7 +86,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     child: Center(
                       child: Text(
                         'Continue',
-                        style: TextStyle(color: AppColors.white, fontSize: AppSizes.fontMedium),
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: AppSizes.fontMedium,
+                        ),
                       ),
                     ),
                   ),

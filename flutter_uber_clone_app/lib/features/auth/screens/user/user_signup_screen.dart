@@ -82,8 +82,13 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                           AppWidgets.widthBox(AppSizes.padding20),
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Last name (Optional)",
+                              "Last name",
                               lastNameControlller,
+                              validator:
+                                  (value) =>
+                                      (value == null || value.isEmpty)
+                                          ? 'Enter your lastname'
+                                          : null,
                             ),
                           ),
                         ],

@@ -9,8 +9,6 @@ import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-
-
 import '../../utils/logger/app_logger.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,7 +19,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     _handleNavigation();
@@ -29,6 +26,35 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _handleNavigation() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    final hasOnBoarded = LocalStorageService.hasCompletedOnboarding();
+    final token = LocalStorageService.getToken();
+    final isLoggedIn = LocalStorageService.getCurrentAccess();
+    AppLogger.d(token);
+
+    if (!hasOnBoarded) {
+      Navigator.pushReplacementNamed(context, AppRoutes.boardingScreen);
+      return;
+    }
+
+    if (token == null || isLoggedIn == null) {
+      Navigator.pushReplacementNamed(context, AppRoutes.userLoginScreen);
+      return;
+    }
+
+    final isTokenRefreshed = await ApiService.refreshToken();
+    final nextRoute =
+        isTokenRefreshed
+            ? ((isLoggedIn == 'user')
+                ? AppRoutes.homeScreen
+                : AppRoutes.captainHomeScreen)
+            : AppRoutes.userLoginScreen;
+
+    Navigator.pushReplacementNamed(context, nextRoute);
+  }
+
+  /*Future<void> _handleNavigation() async {
     await Future.delayed(const Duration(seconds: 2));
 
     final hasOnBoarded = LocalStorageService.hasCompletedOnboarding();
@@ -50,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
         : AppRoutes.userLoginScreen;
 
     Navigator.pushReplacementNamed(context, nextRoute);
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +87,10 @@ class _SplashScreenState extends State<SplashScreen> {
         statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.white,
+        backgroundColor: Color(0xffedeae6),
         body: SafeArea(
           child: Center(
-            child: Image.asset(AppAssets.splashLogo, width: 200, height: 200),
+            child: Image.asset(AppAssets.logo, width: 200, height: 200),
           ),
         ),
       ),

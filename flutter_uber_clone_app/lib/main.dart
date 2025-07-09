@@ -13,16 +13,21 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await LocalStorageService.init();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
 
-  runApp(MultiBlocProvider(
+  runApp(
+    MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => HomeBloc()),
-        BlocProvider(create: (_) => CaptainBloc())
+        BlocProvider(create: (_) => CaptainBloc()),
       ],
-      child: const App()));
+      child: const App(),
+    ),
+  );
 }

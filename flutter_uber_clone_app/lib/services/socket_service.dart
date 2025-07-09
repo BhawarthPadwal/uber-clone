@@ -49,11 +49,6 @@ class SocketService {
       AppLogger.i("🔄 Reconnected");
       socket.emit('join', {'userId': userId, 'userType': userType});
     });
-
-    /*socket.on((data) {
-      AppLogger.i("🚗 Captain location updated: $data");
-      socket.emit('update-location-captain', data);
-    });*/
   }
 
   void emit(String event, dynamic data) {

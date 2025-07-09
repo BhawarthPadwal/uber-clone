@@ -31,7 +31,7 @@ class Routes {
         return getPageTransition(BoardingScreen(), settings);
       case AppRoutes.captainHomeScreen:
         return getPageTransition(CaptainHomeScreen(), settings);
-        /*case AppRoutes.rideCreatedScreen:
+      /*case AppRoutes.rideCreatedScreen:
           return getPageTransition(RideCreatedWidget(), settings);*/
       default:
         return MaterialPageRoute(

@@ -94,8 +94,13 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                           AppWidgets.widthBox(AppSizes.padding20),
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Last name (Optional)",
+                              "Last name",
                               lastNameTextEditingController,
+                              validator:
+                                  (value) =>
+                                      (value == null || value.isEmpty)
+                                          ? 'Enter your lastname'
+                                          : null,
                             ),
                           ),
                         ],

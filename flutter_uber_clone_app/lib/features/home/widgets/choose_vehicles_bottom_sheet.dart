@@ -263,7 +263,11 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                               },
                             ),
                           );
-                          AppLogger.d(widget.points['pickup'] + widget.points['destination']+ vehicleFares[state.selectedVehicleIndex].type);
+                          AppLogger.d(
+                            widget.points['pickup'] +
+                                widget.points['destination'] +
+                                vehicleFares[state.selectedVehicleIndex].type,
+                          );
                           BlocProvider.of<HomeBloc>(context).add(
                             RideCreatedEvent(
                               widget.points['pickup'],
