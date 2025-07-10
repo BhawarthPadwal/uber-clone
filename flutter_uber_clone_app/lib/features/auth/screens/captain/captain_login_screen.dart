@@ -5,6 +5,7 @@ import 'package:flutter_uber_clone_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 
 import '../../../../utils/ui_helpers/ui_helpers.dart';
 import '../../../../utils/widgets/app_widgets.dart';
@@ -56,36 +57,36 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                       AuthWidgets.uberLabel(),
                       Icon(Icons.arrow_forward, size: AppSizes.padding30),
                       AppWidgets.heightBox(AppSizes.padding20),
-                      AuthWidgets.label("What's your email"),
+                      AuthWidgets.label(AppString.enterEmail),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
                         isEmail: true,
-                        "email@example.com",
+                        AppString.emailHint,
                         emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Enter your email';
+                            return AppString.emailWarning;
                           }
                           return null;
                         },
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Enter Password"),
+                      AuthWidgets.label(AppString.enterPassword),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
-                        "Password",
+                        AppString.passwordHint,
                         isPassword: true,
                         passwordController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Enter your password';
+                            return AppString.passwordWarning;
                           }
                           return null;
                         },
                       ),
                       AppWidgets.heightBox(AppSizes.padding40),
                       AuthWidgets.submitButton(
-                        text: "Login",
+                        text: AppString.login,
                         onPressed: () {
                           if (_captainLoginFormKey.currentState!.validate()) {
                             authBloc.add(
@@ -97,7 +98,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                           } else {
                             AppWidgets.showSnackbar(
                               context,
-                              message: 'Kindly fill all fields',
+                              message: AppString.warning,
                             );
                           }
                         },
@@ -107,7 +108,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Join a fleet?',
+                            AppString.inviteTxt,
                             style: TextStyle(fontSize: AppSizes.fontSmall),
                           ),
                           AppWidgets.widthBox(AppSizes.padding10 * 0.5),
@@ -126,7 +127,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                                 );
                               },
                               child: Text(
-                                'Register as a Captain',
+                                AppString.registerAsCaptain,
                                 style: TextStyle(
                                   color: AppColors.bluishGrey,
                                   fontSize: AppSizes.fontSmall,
@@ -138,7 +139,7 @@ class _CaptainLoginScreenState extends State<CaptainLoginScreen> {
                       ),
                       AppWidgets.heightBox(330),
                       AuthWidgets.submitButton(
-                        text: "Sign in as User",
+                        text: AppString.signInAsUser,
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,

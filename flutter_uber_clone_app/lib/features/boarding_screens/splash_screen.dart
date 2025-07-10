@@ -54,30 +54,6 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacementNamed(context, nextRoute);
   }
 
-  /*Future<void> _handleNavigation() async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    final hasOnBoarded = LocalStorageService.hasCompletedOnboarding();
-    final token = LocalStorageService.getToken();
-    final isLoggedIn = LocalStorageService.getCurrentAccess();
-    AppLogger.d(token);
-
-    if (!hasOnBoarded) {
-      Navigator.pushReplacementNamed(context, AppRoutes.boardingScreen);
-    }
-
-    if (token == null || isLoggedIn == null) { // second condition doubtful
-      Navigator.pushReplacementNamed(context, AppRoutes.userLoginScreen);
-    }
-
-    final isTokenRefreshed = await ApiService.refreshToken();
-    final nextRoute = isTokenRefreshed
-        ? ((isLoggedIn == 'user') ? AppRoutes.homeScreen : AppRoutes.captainHomeScreen)
-        : AppRoutes.userLoginScreen;
-
-    Navigator.pushReplacementNamed(context, nextRoute);
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(

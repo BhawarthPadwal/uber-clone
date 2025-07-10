@@ -5,6 +5,7 @@ import 'package:flutter_uber_clone_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 import '../../../../utils/ui_helpers/ui_helpers.dart';
@@ -64,84 +65,84 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                     children: [
                       AuthWidgets.uberLabel(),
                       AppWidgets.heightBox(AppSizes.padding20),
-                      AuthWidgets.label("What's your name"),
+                      AuthWidgets.label(AppString.enterName),
                       AppWidgets.heightBox(AppSizes.padding10),
                       Row(
                         children: [
                           Expanded(
                             child: AuthWidgets.textField(
-                              "First name",
+                              AppString.firstNameLabel,
                               firstNameController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter your firstname'
+                                          ? AppString.firstNameWarning
                                           : null,
                             ),
                           ),
                           AppWidgets.widthBox(AppSizes.padding20),
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Last name",
+                              AppString.lastNameLabel,
                               lastNameControlller,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter your lastname'
+                                          ? AppString.lastNameWarning
                                           : null,
                             ),
                           ),
                         ],
                       ),
                       AppWidgets.heightBox(AppSizes.padding10),
-                      AuthWidgets.label("What's your email"),
+                      AuthWidgets.label(AppString.enterEmail),
                       AppWidgets.heightBox(AppSizes.padding10),
                       AuthWidgets.textField(
-                        "email@example.com",
+                        AppString.emailHint,
                         emailController,
                         isEmail: true,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Enter your email'
+                                    ? AppString.emailWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Enter Password"),
+                      AuthWidgets.label(AppString.enterPassword),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
-                        "Password",
+                        AppString.passwordHint,
                         passwordController,
                         isPassword: true,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Enter your password'
+                                    ? AppString.passwordWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Confirm Password"),
+                      AuthWidgets.label(AppString.enterConfirmPassword),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
-                        "Confirm Password",
+                        AppString.enterConfirmPassword,
                         confirmpasswordController,
                         isPassword: true,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Confirm your password'
+                                    ? AppString.confirmPasswordWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.padding40),
                       AuthWidgets.submitButton(
-                        text: "Create account",
+                        text: AppString.createAccount,
                         onPressed: () {
                           if (_userSignUpFormKey.currentState!.validate()) {
                             if (passwordController.text !=
                                 confirmpasswordController.text) {
                               AppWidgets.showSnackbar(
                                 context,
-                                message: 'Passwords do not match',
+                                message: AppString.passwordMatchWarning,
                               );
                               return;
                             }
@@ -158,7 +159,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                           } else {
                             AppWidgets.showSnackbar(
                               context,
-                              message: 'Kindly fill all fields',
+                              message: AppString.warning,
                             );
                           }
                         },
@@ -168,7 +169,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Already have a account?',
+                            AppString.alreadyHaveAccount,
                             style: TextStyle(fontSize: AppSizes.fontSmall),
                           ),
                           AppWidgets.widthBox(AppSizes.padding10 * 0.5),
@@ -180,7 +181,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               );
                             },
                             child: Text(
-                              'Login here',
+                              AppString.loginHere,
                               style: TextStyle(
                                 color: AppColors.bluishGrey,
                                 fontSize: AppSizes.fontSmall,

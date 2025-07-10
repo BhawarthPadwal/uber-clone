@@ -8,14 +8,15 @@ import 'package:flutter_uber_clone_app/features/home/widgets/choose_vehicles_bot
 import 'package:flutter_uber_clone_app/features/home/widgets/home_widgets.dart';
 import 'package:flutter_uber_clone_app/services/location_service.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-
+import '../../../services/language_provider.dart';
 import '../../../services/socket_service.dart';
 import '../../../utils/constants/app_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initSocket(String userId, String userType) {
     socketService.connect(userId: userId, userType: userType);
-    //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
   }
 
   void getLocation() {
@@ -60,7 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Marker(
               markerId: const MarkerId("currentLocation"),
               position: pos,
-              infoWindow: const InfoWindow(title: "You are here"),
+              infoWindow: InfoWindow(
+                title: AppLocalizations.of(context)!.youAreHere,
+              ),
             ),
           );
         });
@@ -183,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: 20,
                     top: 20,
                     child: Text(
-                      'RideSeva',
+                      AppLocalizations.of(context)!.appName,
                       style: TextStyle(
                         fontSize: AppSizes.fontXL,
                         color: AppColors.black,
@@ -212,6 +214,92 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Icon(Icons.logout),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 110,
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (_) => AlertDialog(
+                                title: const Text("Select Language"),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      title: const Text("English"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('en'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text("मराठी"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('mr'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text("हिंदी"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('hi'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text("ಕನ್ನಡ"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('kn'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text("Русский"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('ru'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: const Text("中文"),
+                                      onTap: () {
+                                        LanguageProvider.of(
+                                          context,
+                                        ).setLocale(const Locale('zh'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                        );
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFFFFF).withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset(AppAssets.language),
+                        ),
                       ),
                     ),
                   ),
@@ -259,8 +347,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'Find a trip',
+                                      Text(
+                                        AppLocalizations.of(context)!.findATrip,
                                         style: TextStyle(
                                           fontSize: AppSizes.fontXL,
                                           fontWeight: FontWeight.bold,
@@ -278,8 +366,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
                                           _onSearchChanged(value);
                                         },
-                                        decoration: const InputDecoration(
-                                          labelText: 'Pickup Location',
+                                        decoration: InputDecoration(
+                                          labelText:
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.pickupLocation,
                                           prefixIcon: Icon(Icons.my_location),
                                           border: OutlineInputBorder(),
                                         ),
@@ -295,8 +386,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           });
                                           _onSearchChanged(value);
                                         },
-                                        decoration: const InputDecoration(
-                                          labelText: 'Destination',
+                                        decoration: InputDecoration(
+                                          labelText:
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.destination,
                                           prefixIcon: Icon(Icons.location_on),
                                           border: OutlineInputBorder(),
                                         ),
@@ -343,7 +437,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                'Search vehicles',
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.searchVehicles,
                                                 style: TextStyle(
                                                   fontSize: AppSizes.fontMedium,
                                                   color: AppColors.white,

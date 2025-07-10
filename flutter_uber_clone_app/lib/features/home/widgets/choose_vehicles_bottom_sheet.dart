@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/search_captain_bottom_sheet.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 
 import '../../../utils/constants/app_assets.dart';
@@ -9,6 +10,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/app_widgets.dart';
 import '../bloc/home_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChooseVehiclesBottomSheet extends StatefulWidget {
   final Map<String, dynamic> points;
@@ -106,7 +108,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          'Choose a vehicle',
+                          AppLocalizations.of(context)!.chooseAVehicle,
                           style: TextStyle(
                             fontSize: AppSizes.fontXL,
                             fontWeight: FontWeight.bold,
@@ -224,8 +226,10 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                                               ),
                                             ],
                                           ),
-                                          const Text(
-                                            'Affordable, compact rides',
+                                          Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.affordableCompactRides,
                                             style: TextStyle(
                                               fontSize: AppSizes.fontSmall,
                                             ),
@@ -286,7 +290,7 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
                           ),
                           child: Center(
                             child: Text(
-                              'BOOK A ${vehicleFares[state.selectedVehicleIndex].type.toUpperCase()}',
+                              '${AppLocalizations.of(context)!.bookA} ${vehicleFares[state.selectedVehicleIndex].type.toUpperCase()}',
                               style: TextStyle(
                                 fontSize: AppSizes.fontMedium,
                                 color: AppColors.white,
@@ -303,7 +307,9 @@ class _ChooseVehiclesBottomSheetState extends State<ChooseVehiclesBottomSheet> {
             },
           );
         } else {
-          return const Center(child: Text('No fare fetched'));
+          return Center(
+            child: Text(AppLocalizations.of(context)!.noFareFetched),
+          );
         }
       },
     );

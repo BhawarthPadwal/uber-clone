@@ -6,11 +6,13 @@ import 'package:flutter_uber_clone_app/features/home/widgets/ride_created_bottom
 import 'package:flutter_uber_clone_app/services/socket_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/logger/app_logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchCaptainBottomSheet extends StatefulWidget {
   final Map<String, dynamic> points;
@@ -31,32 +33,22 @@ class SearchCaptainBottomSheet extends StatefulWidget {
 
 class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
   final socketService = SocketService();
-  bool _isMounted = true; // ✅ Track mounted status
-
-  /*void listenCaptainConfirmation() {
+  bool _isMounted = true; // Track mounted status
+  void listenCaptainConfirmation() {
     socketService.socket.on('ride-confirmed', (data) {
+      if (!_isMounted || !mounted)
+        return; // Prevent context access if unmounted
+
       AppLogger.i("Ride Confirmed $data");
       BlocProvider.of<HomeBloc>(
         context,
       ).add(OpenBottomSheetOnCaptainConfirmationEvent(data));
     });
-  }*/
-  void listenCaptainConfirmation() {
-    socketService.socket.on('ride-confirmed', (data) {
-      if (!_isMounted || !mounted) return; // ✅ Prevent context access if unmounted
-
-      AppLogger.i("Ride Confirmed $data");
-      BlocProvider.of<HomeBloc>(context).add(
-        OpenBottomSheetOnCaptainConfirmationEvent(data),
-      );
-    });
   }
-
 
   @override
   void initState() {
     super.initState();
-    //socketService = SocketService();
     listenCaptainConfirmation();
   }
 
@@ -66,7 +58,6 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
     socketService.socket.off('ride-confirmed'); // ✅ Remove listener
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +123,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                     ),
                     child: Text(
                       textAlign: TextAlign.center,
-                      'Looking for nearby drivers',
+                      AppLocalizations.of(context)!.lookingForNearbyDrivers,
                       style: TextStyle(
                         fontSize: AppSizes.fontXL,
                         fontWeight: FontWeight.bold,
@@ -237,7 +228,7 @@ class _SearchCaptainBottomSheetState extends State<SearchCaptainBottomSheet> {
                         ),
                         child: Center(
                           child: Text(
-                            'Cancel Ride',
+                            AppLocalizations.of(context)!.cancelRide,
                             style: TextStyle(
                               fontSize: AppSizes.fontMedium,
                               color: AppColors.white,

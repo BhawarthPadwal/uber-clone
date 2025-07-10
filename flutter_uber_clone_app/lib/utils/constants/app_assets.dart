@@ -19,6 +19,7 @@ class AppAssets {
 
   // Icons
   static const pinIcon = '$_icons/pin.png';
+  static const language = '$_icons/language.png';
 
   // Animations
   static const searchDriverAnim = '$_anim/search_driver_anim.json';

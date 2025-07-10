@@ -27,7 +27,7 @@ void main() async {
         BlocProvider(create: (_) => HomeBloc()),
         BlocProvider(create: (_) => CaptainBloc()),
       ],
-      child: const App(),
+      child: const MyApp(),
     ),
   );
 }

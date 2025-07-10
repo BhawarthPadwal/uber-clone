@@ -5,6 +5,7 @@ import 'package:flutter_uber_clone_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter_uber_clone_app/features/auth/widgets/auth_widgets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 
 import '../../../../utils/ui_helpers/ui_helpers.dart';
@@ -76,99 +77,99 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                       AuthWidgets.uberLabel(),
                       Icon(Icons.arrow_forward, size: AppSizes.padding30),
                       AppWidgets.heightBox(AppSizes.padding20),
-                      AuthWidgets.label("What's our Captain's name"),
+                      AuthWidgets.label(AppString.captainNameLabel),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       Row(
                         children: [
                           Expanded(
                             child: AuthWidgets.textField(
-                              "First name",
+                              AppString.firstNameLabel,
                               firstNameTextEditingController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter your firstname'
+                                          ? AppString.firstNameWarning
                                           : null,
                             ),
                           ),
                           AppWidgets.widthBox(AppSizes.padding20),
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Last name",
+                              AppString.lastNameLabel,
                               lastNameTextEditingController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter your lastname'
+                                          ? AppString.lastNameWarning
                                           : null,
                             ),
                           ),
                         ],
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("What's our Captain's email"),
+                      AuthWidgets.label(AppString.captainEmailLabel),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
                         isEmail: true,
-                        "email@example.com",
+                        AppString.emailHint,
                         emailTextEditingController,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Enter your email'
+                                    ? AppString.emailWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Enter Password"),
+                      AuthWidgets.label(AppString.enterPassword),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
-                        "Password",
+                        AppString.passwordHint,
                         passwordTextEditingController,
                         isPassword: true,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Enter your password'
+                                    ? AppString.passwordWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Confirm Password"),
+                      AuthWidgets.label(AppString.enterConfirmPassword),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.textField(
-                        "Confirm Password",
+                        AppString.enterConfirmPassword,
                         confirmPasswordController,
                         isPassword: true,
                         validator:
                             (value) =>
                                 (value == null || value.isEmpty)
-                                    ? 'Confirm your password'
+                                    ? AppString.confirmPasswordWarning
                                     : null,
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
-                      AuthWidgets.label("Vehicle Information"),
+                      AuthWidgets.label(AppString.vehicleInfoLabel),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       Row(
                         children: [
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Vehicle Color",
+                              AppString.vehicleInfoLabel,
                               vehicleColorTextEditingController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter vehicle color'
+                                          ? AppString.vehicleColorWarning
                                           : null,
                             ),
                           ),
                           AppWidgets.widthBox(AppSizes.padding20),
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Vehicle Plate",
+                              AppString.vehiclePlateLabel,
                               vehiclePlateTextEditingController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter vehicle plate'
+                                          ? AppString.vehiclePlateWarning
                                           : null,
                             ),
                           ),
@@ -179,12 +180,12 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                         children: [
                           Expanded(
                             child: AuthWidgets.textField(
-                              "Vehicle Capacity",
+                              AppString.vehicleCapacityLabel,
                               vehicleCapacityTextEditingController,
                               validator:
                                   (value) =>
                                       (value == null || value.isEmpty)
-                                          ? 'Enter vehicle capacity'
+                                          ? AppString.vehicleCapacityWarning
                                           : null,
                             ),
                           ),
@@ -252,16 +253,18 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                                   ),
                                 ),
                                 hint: Text(
-                                  "Select vehicle",
+                                  AppString.selectVehicleTypeLabel,
                                   style: TextStyle(
                                     fontSize: AppSizes.fontSmall,
                                     color: Colors.black54,
                                   ),
                                 ),
                                 items:
-                                    ['car', 'motorcycle', 'auto'].map((
-                                      String value,
-                                    ) {
+                                    [
+                                      AppString.carLabel,
+                                      AppString.motorcycleLabel,
+                                      AppString.autoLabel,
+                                    ].map((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
@@ -280,7 +283,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                                 validator:
                                     (value) =>
                                         (value == null || value.isEmpty)
-                                            ? 'Enter vehicle type'
+                                            ? AppString.vehicleTypeWarning
                                             : null,
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
@@ -291,14 +294,14 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                       ),
                       AppWidgets.heightBox(AppSizes.paddingM),
                       AuthWidgets.submitButton(
-                        text: "Create account",
+                        text: AppString.createAccount,
                         onPressed: () {
                           if (_captainSignUpFormKey.currentState!.validate()) {
                             if (passwordTextEditingController.text !=
                                 confirmPasswordController.text) {
                               AppWidgets.showSnackbar(
                                 context,
-                                message: 'Passwords do not match',
+                                message: AppString.passwordMatchWarning,
                               );
                               return;
                             }
@@ -326,7 +329,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                           } else {
                             AppWidgets.showSnackbar(
                               context,
-                              message: 'Kindly fill all fields',
+                              message: AppString.warning,
                             );
                           }
                         },
@@ -336,7 +339,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Already have a account?',
+                            AppString.alreadyHaveAccount,
                             style: TextStyle(fontSize: AppSizes.fontSmall),
                           ),
                           AppWidgets.widthBox(AppSizes.padding10 * 0.2),
@@ -348,7 +351,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                               );
                             },
                             child: Text(
-                              'Login here',
+                              AppString.loginHere,
                               style: TextStyle(
                                 color: AppColors.bluishGrey,
                                 fontSize: AppSizes.fontSmall,

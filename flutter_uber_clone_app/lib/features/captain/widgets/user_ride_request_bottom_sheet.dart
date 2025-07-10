@@ -1,966 +1,5 @@
-/*
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_uber_clone_app/features/captain/bloc/captain_bloc.dart';
-import 'package:flutter_uber_clone_app/services/socket_service.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_enum.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
-import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
-import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
-
-class UserRideRequestBottomSheet extends StatefulWidget {
-  final Map<String, dynamic> rideRequest;
-
-  const UserRideRequestBottomSheet({super.key, required this.rideRequest});
-
-  @override
-  State<UserRideRequestBottomSheet> createState() =>
-      _UserRideRequestBottomSheetState();
-}
-
-class _UserRideRequestBottomSheetState
-    extends State<UserRideRequestBottomSheet> {
-  TextEditingController otpController = TextEditingController();
-  final DraggableScrollableController sheetController =
-      DraggableScrollableController();
-
-  */ /*
-
-*/
-/*bool isAccepted = false;
-  bool isOtpConfirmed = false;*/ /*
-*/
-/*
-
-  RideStatus rideStatus = RideStatus.pending;
-
-  bool get isAccepted =>
-      rideStatus == RideStatus.accepted || rideStatus == RideStatus.confirmed;
-
-  bool get isOtpConfirmed => rideStatus == RideStatus.confirmed;
-
-  Map<String, dynamic>? paymentStatus;
-
-  late SocketService socketService;
-
-  String get primaryButtonText {
-    switch (rideStatus) {
-      case RideStatus.pending:
-        return 'Accept';
-      case RideStatus.accepted:
-        return 'Confirm';
-      case RideStatus.confirmed:
-        return 'Completed Ride';
-      case RideStatus.payment_pending:
-        return 'Payment Pending';
-      case RideStatus.paid:
-        return 'Payment Done';
-      }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    socketService = SocketService();
-    listenToPaymentStatus();
-  }
-
-  void listenToPaymentStatus() {
-    socketService.socket.on('payment-confirmed', (data) {
-      AppLogger.i('Payment Status: $data');
-      if (data is Map && data.containsKey('status')) {
-        try {
-          final castedData = Map<String, dynamic>.from(data);
-          final status = castedData['status'] as String?;
-          if (status != null && status == 'paid') {
-            setState(() {
-              rideStatus = RideStatus.paid;
-              paymentStatus = castedData;
-            });
-          }
-        } catch (e) {
-          AppLogger.e("❌ Error parsing payment-confirmed data: $e");
-        }
-      }
-      // Handle ride started event
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Map<String, dynamic> rideRequest = widget.rideRequest;
-    AppLogger.d(rideRequest);
-    return BlocBuilder<CaptainBloc, CaptainState>(
-      builder: (context, state) {
-        return DraggableScrollableSheet(
-          controller: sheetController,
-          initialChildSize: rideStatus == RideStatus.accepted ? 0.75 : 0.65,
-          minChildSize: 0.65,
-          maxChildSize: 0.85,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AppWidgets.heightBox(AppSizes.padding10),
-                    Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.padding20,
-                      ),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          isAccepted
-                              ? 'Confirm Ride to Start!'
-                              : 'New Ride Available!',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontXL,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.padding20,
-                      ),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: isAccepted ? Colors.white : Colors.amber,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isAccepted ? Colors.amber : Colors.white,
-                            // or any colors
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 20,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Icon(Icons.person),
-                              ),
-                              AppWidgets.widthBox(AppSizes.padding10),
-                              Text(
-                                '${rideRequest['user']['fullname']['firstname']} ${rideRequest['user']['fullname']['lastname']}',
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontMedium,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "2.2 km",
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontLarge,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Image.asset(AppAssets.pinIcon, height: 30),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Expanded(
-                            child: Text(
-                              rideRequest['pickup'],
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Divider(indent: 20, endIndent: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: AppColors.black,
-                            size: 30,
-                          ),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Expanded(
-                            child: Text(
-                              rideRequest['destination'],
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Divider(indent: 20, endIndent: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Icon(Icons.credit_card_sharp, color: AppColors.black),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Text(
-                            '₹${rideRequest['fare']}',
-                            style: TextStyle(
-                              fontSize: AppSizes.fontMedium,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: rideStatus == RideStatus.accepted,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.padding20,
-                          vertical: AppSizes.padding20,
-                        ),
-                        child: TextFormField(
-                          controller: otpController,
-                          decoration: InputDecoration(
-                            hintText: "Enter OTP",
-                            contentPadding: EdgeInsets.all(AppSizes.padding20),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            fillColor: AppColors.lightGrey,
-                            filled: true,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: isOtpConfirmed,
-                      child: SizedBox(height: AppSizes.padding50),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.padding20,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            switch (rideStatus) {
-                              case RideStatus.pending:
-                                // Accept the ride
-                                AppLogger.d(rideRequest['_id']);
-                                BlocProvider.of<CaptainBloc>(
-                                  context,
-                                ).add(AcceptRideEvent(rideRequest['_id']));
-                                rideStatus = RideStatus.accepted;
-                                break;
-
-                              case RideStatus.accepted:
-                                // Confirm OTP
-                                if (otpController.text.trim().isEmpty) {
-                                  AppWidgets.showSnackbar(
-                                    context,
-                                    message: 'Please enter OTP',
-                                  );
-                                  AppLogger.i('Please enter OTP');
-                                  return;
-                                } else {
-                                  final String otp = otpController.text.trim();
-                                  AppLogger.i('OTP: $otp');
-                                  BlocProvider.of<CaptainBloc>(context).add(
-                                    StartRideEvent(rideRequest['_id'], otp),
-                                  );
-                                  otpController.clear();
-                                  rideStatus = RideStatus.confirmed;
-                                }
-                                break;
-
-                              case RideStatus.confirmed:
-                                // Ride complete
-                                BlocProvider.of<CaptainBloc>(context).add(EndRideEvent(rideRequest['_id']));
-                                WidgetsBinding.instance.addPostFrameCallback((
-                                  _,
-                                ) {
-                                  AppWidgets.showSnackbar(
-                                    context,
-                                    message: 'Ride Completed',
-                                  );
-                                });
-                                AppLogger.i('Ride Completed');
-                                rideStatus = RideStatus.payment_pending;
-                                break;
-
-                              case RideStatus.payment_pending:
-                                if (paymentStatus?['status'] == 'paid') {
-                                  rideStatus = RideStatus.paid;
-                                }
-                              case RideStatus.paid:
-                                AppLogger.i('Payment Confirmed');
-                                rideStatus = RideStatus.pending;
-                                Navigator.pop(context);
-                            }
-                          });
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.lightGreen,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(AppSizes.padding10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              primaryButtonText,
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: (isOtpConfirmed) ? false : true,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.padding20,
-                          vertical: AppSizes.padding10,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color:
-                                  isAccepted
-                                      ? Colors.red
-                                      : AppColors.bluishGrey,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(AppSizes.padding10),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                isAccepted ? 'Cancel' : 'Ignore',
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontMedium,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
-*/ /*
-
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_uber_clone_app/features/captain/bloc/captain_bloc.dart';
-import 'package:flutter_uber_clone_app/services/socket_service.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_enum.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
-import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
-import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../../../services/api_service.dart';
-
-class UserRideRequestBottomSheet extends StatefulWidget {
-  final Map<String, dynamic> rideRequest;
-
-  const UserRideRequestBottomSheet({super.key, required this.rideRequest});
-
-  @override
-  State<UserRideRequestBottomSheet> createState() =>
-      _UserRideRequestBottomSheetState();
-}
-
-class _UserRideRequestBottomSheetState
-    extends State<UserRideRequestBottomSheet> {
-  TextEditingController otpController = TextEditingController();
-  final DraggableScrollableController sheetController =
-  DraggableScrollableController();
-
-  RideStatus rideStatus = RideStatus.pending;
-
-  bool get isAccepted =>
-      rideStatus == RideStatus.accepted || rideStatus == RideStatus.confirmed;
-
-  bool get isOtpConfirmed => rideStatus == RideStatus.confirmed;
-
-  Map<String, dynamic>? paymentStatus;
-
-  late SocketService socketService;
-
-  String get primaryButtonText {
-    switch (rideStatus) {
-      case RideStatus.pending:
-        return 'Accept';
-      case RideStatus.accepted:
-        return 'Confirm';
-      case RideStatus.confirmed:
-        return 'Completed Ride';
-      case RideStatus.payment_pending:
-        return 'Payment Pending';
-      case RideStatus.paid:
-        return 'Payment Done';
-    }
-  }
-
-  bool _isMapReady = false;
-  late String _pickupLocation;
-  late String _destinationLocation;
-  late LatLng _pickupLatLng;
-  late LatLng _destinationLatLng;
-  late PolylinePoints polylinePoints;
-  final Completer<GoogleMapController> _mapController = Completer();
-  String? polylineStringData;
-  List<PointLatLng> decodedPoints = [];
-
-  /// Adjusts camera to fit both pickup and destination markers
-  void _moveCameraToFitBounds() async {
-    final GoogleMapController controller = await _mapController.future;
-    LatLngBounds bounds;
-    if (_pickupLatLng.latitude > _destinationLatLng.latitude) {
-      bounds = LatLngBounds(
-        southwest: _destinationLatLng,
-        northeast: _pickupLatLng,
-      );
-    } else {
-      bounds = LatLngBounds(
-        southwest: _pickupLatLng,
-        northeast: _destinationLatLng,
-      );
-    }
-
-    controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
-  }
-
-  /// Converts pickup and destination addresses to coordinates
-  Future<void> _convertAddressesToCoordinates() async {
-    try {
-      final pickupLocations = await locationFromAddress(_pickupLocation);
-      final destinationLocations = await locationFromAddress(_destinationLocation);
-
-      if (pickupLocations.isNotEmpty && destinationLocations.isNotEmpty) {
-        setState(() {
-          _pickupLatLng = LatLng(pickupLocations.first.latitude, pickupLocations.first.longitude);
-          _destinationLatLng = LatLng(destinationLocations.first.latitude, destinationLocations.first.longitude);
-          _isMapReady = true;
-        });
-      }
-    } catch (e) {
-      AppLogger.e("Error converting address to coordinates: \$e");
-    }
-  }
-
-  /// Fetches route polyline from backend and decodes it
-  Future<void> fetchRoutePolyline() async {
-    try {
-      polylineStringData = await ApiService.getRoutes(_pickupLocation, _destinationLocation);
-      AppLogger.d("Polyline String: \$polylineStringData");
-
-      if (polylineStringData != null) {
-        decodedPoints = polylinePoints.decodePolyline(polylineStringData!);
-        AppLogger.d(decodedPoints);
-      }
-
-      if (mounted) setState(() {});
-    } catch (e) {
-      AppLogger.e("Failed to fetch polyline: \$e");
-    }
-  }
-
-  /// Converts list of PointLatLng to LatLng
-  List<LatLng> convertToLatLng(List<PointLatLng> points) {
-    return points.map((p) => LatLng(p.latitude, p.longitude)).toList();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    socketService = SocketService();
-    listenToPaymentStatus();
-
-    final rideData = widget.rideRequest;
-    _pickupLocation = rideData['pickup'];
-    _destinationLocation = rideData['destination'];
-
-    polylinePoints = PolylinePoints();
-    _convertAddressesToCoordinates();
-    fetchRoutePolyline();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => _moveCameraToFitBounds());
-  }
-
-  void listenToPaymentStatus() {
-    socketService.socket.on('payment-confirmed', (data) {
-      AppLogger.i('Payment Status: $data');
-      if (data is Map && data.containsKey('status')) {
-        try {
-          final castedData = Map<String, dynamic>.from(data);
-          final status = castedData['status'] as String?;
-          if (status != null && status == 'paid') {
-            if (mounted) {
-              setState(() {
-                rideStatus = RideStatus.paid;
-                paymentStatus = castedData;
-              });
-
-              AppLogger.i('Payment confirmed, closing sheet...');
-              Future.delayed(const Duration(milliseconds: 500), () {
-                if (mounted) {
-                  Navigator.pop(context);
-                }
-              });
-            }
-          }
-        } catch (e) {
-          AppLogger.e("Error parsing payment-confirmed data: $e");
-        }
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Map<String, dynamic> rideRequest = widget.rideRequest;
-    AppLogger.d(rideRequest);
-
-    return BlocBuilder<CaptainBloc, CaptainState>(
-      builder: (context, state) {
-        return DraggableScrollableSheet(
-          controller: sheetController,
-          initialChildSize: rideStatus == RideStatus.accepted ? 1 : 0.9,
-          minChildSize: 0.9,
-          maxChildSize: 1,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AppWidgets.heightBox(AppSizes.padding10),
-                    Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.padding20,
-                      ),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          isAccepted
-                              ? 'Confirm Ride to Start!'
-                              : 'New Ride Available!',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontXL,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.padding20,
-                      ),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: isAccepted ? Colors.white : Colors.amber,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isAccepted ? Colors.amber : Colors.white,
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 20,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Icon(Icons.person),
-                              ),
-                              AppWidgets.widthBox(AppSizes.padding10),
-                              Text(
-                                '${rideRequest['user']['fullname']['firstname']} ${rideRequest['user']['fullname']['lastname']}',
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontMedium,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "2.2 km",
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontLarge,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    AppWidgets.heightBox(AppSizes.padding20),
-                    /// Map Preview
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          height: 250,
-                          child: _isMapReady
-                              ? GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: _pickupLatLng,
-                              zoom: 14,
-                            ),
-                            onMapCreated: (controller) => _mapController.complete(controller),
-                            markers: {
-                              Marker(
-                                markerId: MarkerId("pickup"),
-                                position: _pickupLatLng,
-                                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                              ),
-                              Marker(
-                                markerId: MarkerId("destination"),
-                                position: _destinationLatLng,
-                                icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                              ),
-                            },
-                            polylines: {
-                              Polyline(
-                                polylineId: PolylineId("route"),
-                                points: convertToLatLng(decodedPoints),
-                                color: Colors.blueAccent,
-                                width: 5,
-                                jointType: JointType.round,
-                                startCap: Cap.roundCap,
-                                endCap: Cap.roundCap,
-                                geodesic: true,
-                              )
-                            },
-                            myLocationEnabled: true,
-                            scrollGesturesEnabled: true,
-                            zoomGesturesEnabled: true,
-                            mapType: MapType.normal,
-                            gestureRecognizers: {
-                              Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-                            },
-                          )
-                              : const Center(child: CircularProgressIndicator()),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Image.asset(AppAssets.pinIcon, height: 30),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Expanded(
-                            child: Text(
-                              rideRequest['pickup'],
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Divider(indent: 20, endIndent: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Icon(Icons.location_on, color: AppColors.black, size: 30),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Expanded(
-                            child: Text(
-                              rideRequest['destination'],
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Divider(indent: 20, endIndent: 20),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Icon(Icons.credit_card_sharp, color: AppColors.black),
-                          AppWidgets.widthBox(AppSizes.padding10),
-                          Text(
-                            '₹${rideRequest['fare']}',
-                            style: TextStyle(
-                              fontSize: AppSizes.fontMedium,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    //const SizedBox(height: AppSizes.padding40),
-                    if (rideStatus == RideStatus.accepted)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.padding20,
-                          vertical: AppSizes.padding20,
-                        ),
-                        child: TextFormField(
-                          controller: otpController,
-                          decoration: InputDecoration(
-                            hintText: "Enter OTP",
-                            contentPadding: EdgeInsets.all(AppSizes.padding20),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            fillColor: AppColors.lightGrey,
-                            filled: true,
-                          ),
-                        ),
-                      ),
-                    if (rideStatus == RideStatus.payment_pending)
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(width: 12),
-                            Text("Waiting for payment confirmation..."),
-                          ],
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            switch (rideStatus) {
-                              case RideStatus.pending:
-                                BlocProvider.of<CaptainBloc>(context).add(
-                                  AcceptRideEvent(rideRequest['_id']),
-                                );
-                                rideStatus = RideStatus.accepted;
-                                break;
-
-                              case RideStatus.accepted:
-                                if (otpController.text.trim().isEmpty) {
-                                  AppWidgets.showSnackbar(
-                                    context,
-                                    message: 'Please enter OTP',
-                                  );
-                                  return;
-                                }
-                                BlocProvider.of<CaptainBloc>(context).add(
-                                  StartRideEvent(
-                                    rideRequest['_id'],
-                                    otpController.text.trim(),
-                                  ),
-                                );
-                                otpController.clear();
-                                rideStatus = RideStatus.confirmed;
-                                break;
-
-                              case RideStatus.confirmed:
-                                BlocProvider.of<CaptainBloc>(context).add(
-                                  EndRideEvent(rideRequest['_id']),
-                                );
-                                AppWidgets.showSnackbar(
-                                  context,
-                                  message: 'Ride Completed',
-                                );
-                                // ✅ wrap in setState for UI rebuild
-                                rideStatus = RideStatus.payment_pending;
-                                break;
-
-                              case RideStatus.payment_pending:
-                                if (paymentStatus?['status'] == 'paid') {
-                                  rideStatus = RideStatus.paid;
-                                }
-                                break;
-
-                              case RideStatus.paid:
-                                Navigator.pop(context);
-                                break;
-                            }
-                          });
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: AppColors.lightGreen,
-                            borderRadius: BorderRadius.circular(AppSizes.padding10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              primaryButtonText,
-                              style: TextStyle(
-                                fontSize: AppSizes.fontMedium,
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (!isOtpConfirmed)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSizes.padding20,
-                          vertical: AppSizes.padding10,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: isAccepted ? Colors.red : AppColors.bluishGrey,
-                              borderRadius: BorderRadius.circular(AppSizes.padding10),
-                            ),
-                            child: Center(
-                              child: Text(
-                                isAccepted ? 'Cancel' : 'Ignore',
-                                style: TextStyle(
-                                  fontSize: AppSizes.fontMedium,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
-*/
-
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -978,6 +17,7 @@ import 'package:flutter_uber_clone_app/utils/constants/app_enum.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Bottom sheet widget that shows ride request details to the captain.
 /// Allows accepting, confirming, and completing the ride along with payment handling.
@@ -1022,15 +62,15 @@ class _UserRideRequestBottomSheetState
   String get primaryButtonText {
     switch (rideStatus) {
       case RideStatus.pending:
-        return 'Accept';
+        return AppLocalizations.of(context)!.accept;
       case RideStatus.accepted:
-        return 'Confirm';
+        return AppLocalizations.of(context)!.confirm;
       case RideStatus.confirmed:
-        return 'Completed Ride';
+        return AppLocalizations.of(context)!.completedRide;
       case RideStatus.payment_pending:
-        return 'Payment Pending';
+        return AppLocalizations.of(context)!.paymentPending;
       case RideStatus.paid:
-        return 'Payment Done';
+        return AppLocalizations.of(context)!.paymentDone;
     }
   }
 
@@ -1150,15 +190,15 @@ class _UserRideRequestBottomSheetState
   String _getTitleTextForStatus() {
     switch (rideStatus) {
       case RideStatus.pending:
-        return 'New Ride Available!';
+        return AppLocalizations.of(context)!.newRideAvailable;
       case RideStatus.accepted:
-        return 'Confirm Ride to Start!';
+        return AppLocalizations.of(context)!.confirmRideToStart;
       case RideStatus.confirmed:
-        return 'Ride in Progress';
+        return AppLocalizations.of(context)!.rideInProgress;
       case RideStatus.payment_pending:
-        return 'Waiting for Payment';
+        return AppLocalizations.of(context)!.waitingForPayment;
       case RideStatus.paid:
-        return 'Ride Completed!';
+        return AppLocalizations.of(context)!.rideCompleted;
     }
   }
 
@@ -1172,7 +212,6 @@ class _UserRideRequestBottomSheetState
         return DraggableScrollableSheet(
           controller: sheetController,
           initialChildSize: 0.95,
-          //initialChildSize: rideStatus == RideStatus.accepted ? 0.95 : 0.95,
           minChildSize: 0.95,
           maxChildSize: 0.95,
           expand: false,
@@ -1203,20 +242,6 @@ class _UserRideRequestBottomSheetState
                       ),
                     ),
                     const SizedBox(height: AppSizes.padding20),
-                    /*Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding20),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          isAccepted ? 'Confirm Ride to Start!' : 'New Ride Available!',
-                          style: TextStyle(
-                            fontSize: AppSizes.fontXL,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                    ),*/
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSizes.padding20,
@@ -1411,7 +436,7 @@ class _UserRideRequestBottomSheetState
       child: TextFormField(
         controller: otpController,
         decoration: InputDecoration(
-          hintText: "Enter OTP",
+          hintText: AppLocalizations.of(context)!.enterOTP,
           contentPadding: const EdgeInsets.all(AppSizes.padding20),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           fillColor: AppColors.lightGrey,
@@ -1422,14 +447,14 @@ class _UserRideRequestBottomSheetState
   }
 
   Widget buildPaymentWaiting() {
-    return const Padding(
-      padding: EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(width: 12),
-          Text("Waiting for payment confirmation..."),
+          const CircularProgressIndicator(),
+          const SizedBox(width: 12),
+          Text(AppLocalizations.of(context)!.waitingForPaymentConfirmation),
         ],
       ),
     );
@@ -1477,7 +502,9 @@ class _UserRideRequestBottomSheetState
           ),
           child: Center(
             child: Text(
-              isAccepted ? 'Cancel' : 'Ignore',
+              isAccepted
+                  ? AppLocalizations.of(context)!.cancel
+                  : AppLocalizations.of(context)!.ignore,
               style: TextStyle(
                 fontSize: AppSizes.fontMedium,
                 color: AppColors.white,
@@ -1503,7 +530,10 @@ class _UserRideRequestBottomSheetState
 
         case RideStatus.accepted:
           if (otpController.text.trim().isEmpty) {
-            AppWidgets.showSnackbar(context, message: 'Please enter OTP');
+            AppWidgets.showSnackbar(
+              context,
+              message: AppLocalizations.of(context)!.pleaseEnterOTP,
+            );
             return;
           }
           BlocProvider.of<CaptainBloc>(context).add(
@@ -1520,7 +550,10 @@ class _UserRideRequestBottomSheetState
           BlocProvider.of<CaptainBloc>(
             context,
           ).add(EndRideEvent(widget.rideRequest['_id']));
-          AppWidgets.showSnackbar(context, message: 'Ride Completed');
+          AppWidgets.showSnackbar(
+            context,
+            message: AppLocalizations.of(context)!.rideCompleted,
+          );
           rideStatus = RideStatus.payment_pending;
           break;
 

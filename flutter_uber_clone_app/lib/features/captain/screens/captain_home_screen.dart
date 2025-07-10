@@ -9,11 +9,14 @@ import 'package:flutter_uber_clone_app/services/location_service.dart';
 import 'package:flutter_uber_clone_app/storage/local_storage_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../services/language_provider.dart';
 import '../../../services/socket_service.dart';
+import '../../../utils/constants/app_assets.dart';
 
 class CaptainHomeScreen extends StatefulWidget {
   const CaptainHomeScreen({super.key});
@@ -28,10 +31,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
       Completer<GoogleMapController>();
   final Set<Marker> _markers = {};
   CaptainBloc captainBloc = CaptainBloc();
-  final LatLng _currentPosition = const LatLng(
-    19.0338457,
-    73.0195871,
-  ); // default
+  LatLng _currentPosition = const LatLng(19.0338457, 73.0195871); // default
   late SocketService socketService;
   Map<String, dynamic>? captainProfile;
 
@@ -44,10 +44,17 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
 
   void initSocket(String userId, String userType) {
     socketService.connect(userId: userId, userType: userType);
-    //socketService.connect(userId: '6853fdf51246d822a9601ccc', userType: 'captain');
   }
 
-  /*void getLocation() {
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+    socketService = SocketService();
+    captainBloc.add(GetCaptainProfileEvent());
+  }
+
+  void getLocation() {
     // One-time fetch
     LocationService().getCurrentLocation().then((pos) {
       if (pos != null) {
@@ -57,7 +64,9 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
             Marker(
               markerId: const MarkerId("currentLocation"),
               position: pos,
-              infoWindow: const InfoWindow(title: "You are here"),
+              infoWindow: InfoWindow(
+                title: AppLocalizations.of(context)!.youAreHere,
+              ),
             ),
           );
         });
@@ -72,14 +81,6 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
       },
       markerSet: _markers,
     );
-  }*/
-
-  @override
-  void initState() {
-    super.initState();
-    //getLocation();
-    socketService = SocketService();
-    captainBloc.add(GetCaptainProfileEvent());
   }
 
   void listenUserRequest() {
@@ -161,7 +162,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                   left: 20,
                   top: 20,
                   child: Text(
-                    'RideSeva',
+                    AppLocalizations.of(context)!.appName,
                     style: TextStyle(
                       fontSize: AppSizes.fontXL,
                       color: AppColors.black,
@@ -190,6 +191,92 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Icon(Icons.logout),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 10,
+                  top: 110,
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (_) => AlertDialog(
+                              title: const Text("Select Language"),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    title: const Text("English"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('en'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text("मराठी"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('mr'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text("हिंदी"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('hi'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text("ಕನ್ನಡ"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('kn'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text("Русский"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('ru'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: const Text("中文"),
+                                    onTap: () {
+                                      LanguageProvider.of(
+                                        context,
+                                      ).setLocale(const Locale('zh'));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF).withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Image.asset(AppAssets.language),
+                      ),
                     ),
                   ),
                 ),
@@ -228,25 +315,6 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                               ),
                               // Image.asset('assets/images/profile.jpg', width: 40, height: 40)),
                               AppWidgets.widthBox(AppSizes.padding10),
-                              /*if (state is FetchCaptainProfileState)
-                                */
-                              /*Text(
-                                  "${captainProfile?['fullname']['firstname'].toString().toUpperCase()} ${captainProfile?['fullname']['lastname'].toString().toUpperCase()}",
-                                  style: TextStyle(
-                                    fontSize: AppSizes.fontMedium,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),*/
-                              /*
-                                captainProfile != null
-                                    ? Text(
-                                  "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} ${captainProfile!['fullname']['lastname'].toString().toUpperCase()}",
-                                  style: TextStyle(
-                                    fontSize: AppSizes.fontMedium,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )
-                                    : SizedBox.shrink(),*/
                               if (captainProfile != null)
                                 Text(
                                   "${captainProfile!['fullname']['firstname'].toString().toUpperCase()} "
@@ -260,7 +328,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                                 SizedBox(
                                   height: 20,
                                   child: Text(
-                                    "Loading...",
+                                    AppLocalizations.of(context)!.loading,
                                     style: TextStyle(
                                       fontSize: AppSizes.fontSmall,
                                       fontStyle: FontStyle.italic,
@@ -280,7 +348,7 @@ class _CaptainHomeScreenState extends State<CaptainHomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "Earned",
+                                    AppLocalizations.of(context)!.earned,
                                     style: TextStyle(
                                       fontSize: AppSizes.fontSmall,
                                       fontWeight: FontWeight.w400,

@@ -13,9 +13,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/home_widgets.dart';
 import 'package:flutter_uber_clone_app/services/api_service.dart';
+import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart' as lottie;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../services/socket_service.dart';
 import '../../../utils/constants/app_assets.dart';
@@ -36,7 +38,7 @@ class RideCreatedWidget extends StatefulWidget {
 class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   final socketService = SocketService();
   bool _isMounted = true;
-  String currentStatus = 'Waiting for Confirmation';
+  String currentStatus = AppString.waitingForConfirmation;
   bool _isMapReady = false;
   late String _pickupLocation;
   late String _destinationLocation;
@@ -52,7 +54,9 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
       if (!_isMounted || !mounted) return;
 
       AppLogger.i('Ride Started: \n $data');
-      BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideStartedEvent());
+      BlocProvider.of<HomeBloc>(
+        context,
+      ).add(UpdateCurrentStateToRideStartedEvent());
     });
   }
 
@@ -61,10 +65,11 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
       if (!_isMounted || !mounted) return;
 
       AppLogger.i('Ride Ended: \n $data');
-      BlocProvider.of<HomeBloc>(context).add(UpdateCurrentStateToRideEndedEvent());
+      BlocProvider.of<HomeBloc>(
+        context,
+      ).add(UpdateCurrentStateToRideEndedEvent());
     });
   }
-
 
   /// Adjusts camera to fit both pickup and destination markers
   void _moveCameraToFitBounds() async {
@@ -164,7 +169,6 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final rideData = widget.rideData;
@@ -178,9 +182,9 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
           Navigator.pop(context);
         }
         if (state is UpdateCurrentStateToRideStartedState) {
-          setState(() => currentStatus = 'Ride Started');
+          setState(() => currentStatus = AppString.rideStarted);
         } else if (state is UpdateCurrentStateToRideEndedState) {
-          setState(() => currentStatus = 'Make Payment');
+          setState(() => currentStatus = AppString.makePayment);
         }
       },
       builder: (context, state) {
@@ -393,7 +397,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
   Widget _buildPaymentButton(Map<String, dynamic> rideData) {
     return ElevatedButton(
       onPressed:
-          currentStatus == 'Make Payment'
+          currentStatus == AppString.makePayment
               ? () {
                 BlocProvider.of<HomeBloc>(
                   context,
@@ -402,11 +406,11 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
               : null,
       style: ElevatedButton.styleFrom(
         backgroundColor:
-            currentStatus == 'Make Payment'
+            currentStatus == AppString.makePayment
                 ? AppColors.lightGreen
                 : AppColors.white,
         foregroundColor:
-            currentStatus == 'Make Payment'
+            currentStatus == AppString.makePayment
                 ? AppColors.white
                 : AppColors.lightGreen,
         disabledBackgroundColor: Colors.white,
@@ -418,12 +422,26 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
         ),
       ),
       child: Text(
-        currentStatus,
+        currentStatus == AppString.waitingForConfirmation
+            ? AppLocalizations.of(context)!.waitingForConfirmation
+            : currentStatus == AppString.rideStarted
+            ? AppLocalizations.of(context)!.rideStarted
+            : currentStatus == AppString.makePayment
+            ? AppLocalizations.of(context)!.makePayment
+            : currentStatus,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: AppSizes.fontMedium,
         ),
       ),
+
+      /*child: Text(
+        currentStatus,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppSizes.fontMedium,
+        ),
+      ),*/
     );
   }
 }
