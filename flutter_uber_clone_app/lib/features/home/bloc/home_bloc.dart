@@ -3,13 +3,10 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
-import 'package:flutter_uber_clone_app/services/api_service.dart';
 import 'package:flutter_uber_clone_app/utils/api/api_manager.dart';
 import 'package:flutter_uber_clone_app/utils/api/api_req_endpoints.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:meta/meta.dart';
-
-import '../../../services/socket_service.dart';
 import '../models/map_suggestion_model.dart';
 
 part 'home_event.dart';
@@ -85,10 +82,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         AppLogger.d(fare);
         AppLogger.d(distance);
         AppLogger.d(duration);
-        final List<dynamic> vehicleFare =
-            fare.entries.map((e) {
-              return VehicleFare(type: e.key, amount: e.value);
-            }).toList();
+        // final List<dynamic> vehicleFare =
+        //     fare.entries.map((e) {
+        //       return VehicleFare(type: e.key, amount: e.value);
+        //     }).toList();
 
         final List<VehicleFare> vehicleFareList =
             fare.entries

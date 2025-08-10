@@ -150,7 +150,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               UserSignupEvent(
                                 {
                                   "firstname": firstNameController.text,
-                                  "lastname": lastNameControlller.text ?? "",
+                                  "lastname": lastNameControlller.text,
                                 },
                                 emailController.text,
                                 confirmpasswordController.text,

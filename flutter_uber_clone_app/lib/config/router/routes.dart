@@ -7,9 +7,7 @@ import 'package:flutter_uber_clone_app/features/auth/screens/user/user_signup_sc
 import 'package:flutter_uber_clone_app/features/boarding_screens/boarding_screen.dart';
 import 'package:flutter_uber_clone_app/features/boarding_screens/splash_screen.dart';
 import 'package:flutter_uber_clone_app/features/captain/screens/captain_home_screen.dart';
-import 'package:flutter_uber_clone_app/features/home/widgets/ride_created_bottom_sheet.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../features/home/screens/home_screen.dart';
 
 class Routes {

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_uber_clone_app/features/home/bloc/home_bloc.dart';
-import 'package:flutter_uber_clone_app/features/home/widgets/search_captain_bottom_sheet.dart';
-import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../utils/constants/app_assets.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 

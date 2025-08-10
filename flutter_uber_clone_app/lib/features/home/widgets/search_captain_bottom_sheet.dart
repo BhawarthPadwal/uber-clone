@@ -6,13 +6,12 @@ import 'package:flutter_uber_clone_app/features/home/widgets/ride_created_bottom
 import 'package:flutter_uber_clone_app/services/socket_service.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_assets.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_colors.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/logger/app_logger.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchCaptainBottomSheet extends StatefulWidget {
   final Map<String, dynamic> points;

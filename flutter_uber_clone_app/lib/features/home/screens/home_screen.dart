@@ -13,10 +13,10 @@ import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/language_provider.dart';
 import '../../../services/socket_service.dart';
 import '../../../utils/constants/app_colors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

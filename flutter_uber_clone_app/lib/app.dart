@@ -27,12 +27,12 @@ class App extends StatelessWidget {
 }
 */
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_uber_clone_app/services/language_provider.dart';
 
 import 'config/router/app_routes.dart';
 import 'config/router/routes.dart';
+import 'l10n/app_localizations.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

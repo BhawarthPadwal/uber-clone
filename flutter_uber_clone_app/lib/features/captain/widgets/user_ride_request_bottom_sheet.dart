@@ -17,7 +17,8 @@ import 'package:flutter_uber_clone_app/utils/constants/app_enum.dart';
 import 'package:flutter_uber_clone_app/utils/constants/app_sizes.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 import 'package:flutter_uber_clone_app/utils/widgets/app_widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../l10n/app_localizations.dart';
 
 /// Bottom sheet widget that shows ride request details to the captain.
 /// Allows accepting, confirming, and completing the ride along with payment handling.

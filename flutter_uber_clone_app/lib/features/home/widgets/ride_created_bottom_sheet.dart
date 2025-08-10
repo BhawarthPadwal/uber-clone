@@ -17,8 +17,8 @@ import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart' as lottie;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../services/socket_service.dart';
 import '../../../utils/constants/app_assets.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -319,7 +319,7 @@ class _RideCreatedWidgetState extends State<RideCreatedWidget> {
                   /// Payment Button
                   _buildPaymentButton(rideData),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 50),
                 ],
               ),
             );

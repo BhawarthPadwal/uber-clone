@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_uber_clone_app/features/home/models/vehicle_fare_model.dart';
 import 'package:flutter_uber_clone_app/features/home/widgets/search_captain_bottom_sheet.dart';
-import 'package:flutter_uber_clone_app/utils/constants/app_strings.dart';
 import 'package:flutter_uber_clone_app/utils/logger/app_logger.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/constants/app_assets.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 import '../../../utils/widgets/app_widgets.dart';
 import '../bloc/home_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChooseVehiclesBottomSheet extends StatefulWidget {
   final Map<String, dynamic> points;

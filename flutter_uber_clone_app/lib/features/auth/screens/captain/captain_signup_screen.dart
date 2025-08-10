@@ -311,7 +311,7 @@ class _CaptainSignupScreenState extends State<CaptainSignupScreen> {
                                   "firstname":
                                       firstNameTextEditingController.text,
                                   "lastname":
-                                      lastNameTextEditingController.text ?? "",
+                                      lastNameTextEditingController.text,
                                 },
                                 emailTextEditingController.text,
                                 confirmPasswordController.text,
