@@ -139,7 +139,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Bhawarthsingh Padwal**
 - GitHub: [@BhawarthPadwal](https://github.com/BhawarthPadwal)
-- LinkedIn: [Bhawarthsingh Padwal](https://www.linkedin.com/in/bhawarth-padwal?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+- LinkedIn: [Bhawarth Padwal](https://www.linkedin.com/in/bhawarth-padwal?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
 
 ## 🙏 Acknowledgments
 
